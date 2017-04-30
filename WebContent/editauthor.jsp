@@ -17,9 +17,9 @@
 	</div>
 	<form action="editAuthor" method="post">
 		<div class="modal-body">
-			<p>Enter the details of your Author:</p>
+			<p>Enter the name of the Author:</p>
 			<input type="text" name="authorName"
-				value="<%=author.getAuthorName()%>">
+				value="<%=author.getAuthorName()%>" placeholder="New Name" required>
 				 <br /> 
 				 <input type="hidden" name="authorId" value="<%=author.getAuthorId()%>">
 		</div>

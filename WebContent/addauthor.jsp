@@ -10,7 +10,7 @@
 	<form action="addAuthor" method="post">
 		<div class="modal-body">
 			<p>Enter new author's name:</p>
-			<input type="text" name="authorName"> <br /> <input
+			<input type="text" name="authorName" placeholder="New Name" required> <br /> <input
 				type="hidden" name="authorId">
 		</div>
 		<div class="modal-footer">

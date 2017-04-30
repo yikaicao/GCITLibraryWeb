@@ -21,7 +21,8 @@ import com.gcit.lms.service.AdminService;
 /**
  * Servlet implementation class AdminServlet
  */
-@WebServlet({ "/addAuthor", "/editAuthor", "/deleteAuthor", "/pageAuthors", "/searchAuthors", "/addBook" })
+@WebServlet({ "/addAuthor", "/editAuthor", "/deleteAuthor", "/pageAuthors", "/searchAuthors", "/addBook", "/editBook",
+		"/deleteBook", "/pageBooks", "/searchBooks" })
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -53,6 +54,10 @@ public class AdminServlet extends HttpServlet {
 			String data = searchAuthors(request);
 			response.getWriter().write(data);
 			isAjax = Boolean.TRUE;
+			break;
+		case "/pageBooks":
+			pageBooks(request);
+			forwardPath = "/books.jsp";
 			break;
 		}
 
@@ -89,6 +94,14 @@ public class AdminServlet extends HttpServlet {
 			addBook(request);
 			forwardPath = "/books.jsp";
 			break;
+		case "/editBook":
+			editBook(request);
+			forwardPath = "/books.jsp";
+			break;
+		case "/deleteBook":
+			deleteBook(request);
+			forwardPath = "/books.jsp";
+			break;
 		}
 
 		RequestDispatcher rd = request.getRequestDispatcher(forwardPath);
@@ -101,7 +114,9 @@ public class AdminServlet extends HttpServlet {
 		AdminService service = new AdminService();
 		try {
 			service.addAuthor(author);
+			request.setAttribute("message", "Add Success");
 		} catch (SQLException e) {
+			request.setAttribute("message", "Add Failed");
 			e.printStackTrace();
 		}
 	}
@@ -126,7 +141,7 @@ public class AdminServlet extends HttpServlet {
 			service.deleteAuthorById(Integer.parseInt(request.getParameter("authorId")));
 			request.setAttribute("message", "Delete Success");
 		} catch (NumberFormatException | SQLException e) {
-			request.setAttribute("message", "Deltion Failed");
+			request.setAttribute("message", "Delete Failed");
 			e.printStackTrace();
 		}
 	}
@@ -159,9 +174,59 @@ public class AdminServlet extends HttpServlet {
 		AdminService service = new AdminService();
 		try {
 			service.addBook(book, authorList, genreList, pb);
+			request.setAttribute("message", "Add Success");
 		} catch (SQLException e) {
+			request.setAttribute("message", "Add Failed");
 			e.printStackTrace();
 		}
+	}
+
+	private void editBook(HttpServletRequest request) {
+		// prepare new book's title
+		Book book = new Book();
+		book.setTitle(request.getParameter("bookTitle"));
+		book.setBookId(Integer.valueOf(request.getParameter("bookId")));
+
+		// prepare new book's author(s)
+		List<Author> authorList = new ArrayList<>();
+		for (String anAuthorId : request.getParameterValues("authors")) {
+			Author au = new Author();
+			au.setAuthorId(Integer.valueOf(anAuthorId));
+			authorList.add(au);
+		}
+
+		// prepare new book's genre(s)
+		List<Genre> genreList = new ArrayList<>();
+		for (String aGenreId : request.getParameterValues("genres")) {
+			Genre gn = new Genre();
+			gn.setGenreId(Integer.valueOf(aGenreId));
+			genreList.add(gn);
+		}
+
+		// prepare new book's publisher
+		Publisher pb = new Publisher();
+		pb.setPubId(Integer.valueOf(request.getParameter("publisher")));
+
+		AdminService service = new AdminService();
+		try {
+			service.updateBook(book, authorList, genreList, pb);
+			request.setAttribute("message", "Edit Success");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Edit Failed");
+			e.printStackTrace();
+		}
+	}
+
+	private void deleteBook(HttpServletRequest request) {
+		AdminService service = new AdminService();
+		try {
+			service.deleteBookById(Integer.parseInt(request.getParameter("bookId")));
+			request.setAttribute("message", "Delete Success");
+		} catch (NumberFormatException | SQLException e) {
+			request.setAttribute("message", "Delete Failed");
+			e.printStackTrace();
+		}
+
 	}
 
 	private void pageAuthors(HttpServletRequest request) {
@@ -170,6 +235,19 @@ public class AdminServlet extends HttpServlet {
 
 		try {
 			request.setAttribute("authors", service.getAllAuthorsOnPage(pageNo));
+			request.setAttribute("pageNo", pageNo);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void pageBooks(HttpServletRequest request) {
+		Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
+		AdminService service = new AdminService();
+
+		try {
+			request.setAttribute("books", service.getAllBooksOnPage(pageNo));
 			request.setAttribute("pageNo", pageNo);
 
 		} catch (SQLException e) {

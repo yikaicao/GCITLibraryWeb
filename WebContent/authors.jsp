@@ -66,6 +66,7 @@
 			$('#paginationList').html($.trim(array_data[1]));
 		})
 	};
+	
 </script>
 
 <div class="container-fluid">
@@ -75,7 +76,7 @@
 				<li><a href="admin.jsp">Overview</a></li>
 			</ul>
 			<ul class="nav nav-sidebar">
-				<li class="active"><a href="#">All Authors <span
+				<li class="active"><a href="authors.jsp">All Authors <span
 						class="sr-only">(current)</span></a></li>
 				<li><a href="books.jsp">All Books</a></li>
 				<li><a href="">All Publishers</a></li>
@@ -89,6 +90,8 @@
 
 
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			<h5>${message}</h5>
+		
 			<h2 class="sub-header">Author List</h2>
 
 			<!-- Search -->
@@ -157,7 +160,6 @@
 				</table>
 			</div>
 
-
 			<!-- Modal Connector -->
 			<div class="modal fade" tabindex="-1" role="dialog"
 				id="modalConnector">
@@ -197,9 +199,8 @@
 			<button type="button" class="btn btn-success"
 				style="display: inline; float: left;" data-toggle="modal"
 				data-target="#modalConnector" href="addauthor.jsp?">Add</button>
-
 			<!-- /.Add Button -->
-			
+
 		</div>
 	</div>
 </div>

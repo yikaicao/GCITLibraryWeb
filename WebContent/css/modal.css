@@ -1,0 +1,13 @@
+.modal-body-left, .modal-body-right {
+	width: 50%;
+	float: left;
+	margin-bottom: 15px;
+}
+
+.modal-footer {
+	clear: both;
+}
+
+.modal-body select, input {
+	width: 80%;
+}

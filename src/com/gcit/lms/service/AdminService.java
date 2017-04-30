@@ -84,6 +84,34 @@ public class AdminService {
 		}
 	}
 
+	public void updateBook(Book book, List<Author> authorList, List<Genre> genreList, Publisher pb)
+			throws SQLException {
+		Connection conn = null;
+
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bkDAO = new BookDAO(conn);
+			Integer bookId = book.getBookId();
+
+			// update book author relation
+			bkDAO.updateBookAuthors(bookId, authorList);
+
+			// add book genre relation
+			bkDAO.updateBookGenres(bookId, genreList);
+
+			// add book publisher relation
+			bkDAO.updateBookPublisher(bookId, pb);
+
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+	}
+
 	/**
 	 * 
 	 * @return List of all authors stored in library database
@@ -243,6 +271,22 @@ public class AdminService {
 		return null;
 	}
 
+	public Book getBookByPk(Integer bookId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bkDAO = new BookDAO(conn);
+			return bkDAO.readBookByID(bookId);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
 	public void editAuthor(Author author) throws SQLException {
 		Connection conn = null;
 		try {
@@ -282,6 +326,23 @@ public class AdminService {
 			conn = ConnectionUtil.getConnection();
 			AuthorDAO auDAO = new AuthorDAO(conn);
 			auDAO.deleteAuthorById(authorId);
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	public void deleteBookById(int bookId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bkDAO = new BookDAO(conn);
+			bkDAO.deleteBookById(bookId);
 			conn.commit();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

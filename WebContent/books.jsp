@@ -17,6 +17,7 @@
 
 	Integer numOfPages = 0;
 	Integer booksCount = service.getBooksCount();
+	
 	if (booksCount % 10 > 0)
 		numOfPages = booksCount / 10 + 1;
 	else
@@ -24,7 +25,7 @@
 
 	List<Book> books = new ArrayList<>();
 
-	if (request.getAttribute("authors") != null)
+	if (request.getAttribute("books") != null)
 		books = (List<Book>) request.getAttribute("books");
 	else
 		books = service.getAllBooksOnPage(1);
@@ -38,6 +39,37 @@
 	Integer nextPageNo = pageNo == numOfPages ? numOfPages : pageNo + 1;
 %>
 
+<script>
+	function searchBooks() {
+		$.ajax({
+			url : "searchBooks",
+			data : {
+				searchString : $('#searchString').val(),
+				pageNo : 1
+			}
+		}).done(function(data) {
+			var array_data = String(data).split("\n");
+			$('#booksTable').html($.trim(array_data[0]));
+			$('#paginationList').html($.trim(array_data[1]));
+		})
+	};
+
+	function searchAuthorsPage(pageNo) {
+		$.ajax({
+			url : "searchAuthors",
+			data : {
+				searchString : $('#searchString').val(),
+				pageNo : pageNo
+			}
+		}).done(function(data) {
+			var array_data = String(data).split("\n");
+			$('#authorsTable').html($.trim(array_data[0]));
+			$('#paginationList').html($.trim(array_data[1]));
+		})
+	};
+	
+</script>
+
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-sm-3 col-md-2 sidebar">
@@ -47,7 +79,7 @@
 			<ul class="nav nav-sidebar">
 
 				<li><a href="authors.jsp">All Authors</a></li>
-				<li class="active"><a href="#">All Books<span
+				<li class="active"><a href="books.jsp">All Books<span
 						class="sr-only">(current)</span></a></li>
 				<li><a href="">All Publishers</a></li>
 				<li><a href="">All Branches</a></li>
@@ -60,6 +92,7 @@
 
 
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			<h5>${message}</h5>
 			<h2 class="sub-header">Book List</h2>
 
 			<!-- Search -->
@@ -68,7 +101,7 @@
 					<div class="input-group" style="display: inline;">
 						<input type="text" class="form-control"
 							placeholder="Search for Book" style="border-radius: 5px;"
-							name="searchString" id="searchString" oninput="searchAuthors()">
+							name="searchString" id="searchString" oninput="searchBooks()">
 						<span class="input-group-btn"> </span>
 					</div>
 					<!-- /input-group -->
@@ -81,7 +114,7 @@
 
 			<!-- Table -->
 			<div class="table-responsive">
-				<table class="table table-striped" id="authorsTable">
+				<table class="table table-striped" id="booksTable">
 					<thead>
 						<tr>
 							<th>#</th>
@@ -123,12 +156,12 @@
 
 
 							<td><button type="button" class="btn btn-primary"
-									data-toggle="modal" data-target="modalConnector"
-									href="editauthor.jsp?authorId=<%=bk.getBookId()%>"
+									data-toggle="modal" data-target="#modalConnector"
+									href="editbook.jsp?bookId=<%=bk.getBookId()%>"
 									style="margin-right: 2%;">Update</button>
 								<button type="button" class="btn btn-danger" data-toggle="modal"
-									data-target="modalConnector"
-									href="deleteauthor.jsp?authorId=<%=bk.getBookId()%>">Delete</button>
+									data-target="#modalConnector"
+									href="deletebook.jsp?bookId=<%=bk.getBookId()%>">Delete</button>
 							</td>
 						</tr>
 
