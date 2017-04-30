@@ -31,21 +31,25 @@ public class AuthorDAO extends BaseDAO {
 		return readCount("select count(*) as COUNT from tbl_author", null);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Author> readAllAuthors(Integer pageNo) throws ClassNotFoundException, SQLException {
 		setPageNo(pageNo);
 		return (List<Author>) read("select * from tbl_author", null);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Author> readAllAuthors() throws SQLException {
 		return (List<Author>) readFirstLevel("select * from tbl_author", null);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Author> readAllAuthorsByName(String authorName) throws SQLException {
 		authorName = "%" + authorName + "%";
 		return (List<Author>) readFirstLevel("select * from tbl_author where authorName like ?",
 				new Object[] { authorName });
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Author> readAuthorsByName(Integer pageNo, String authorName) throws ClassNotFoundException, SQLException {
 		setPageNo(pageNo);
 		authorName = "%" + authorName + "%";

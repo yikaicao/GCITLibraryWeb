@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.Genre;
+import com.gcit.lms.entity.Publisher;
 import com.gcit.lms.service.AdminService;
 
 /**
@@ -142,10 +144,21 @@ public class AdminServlet extends HttpServlet {
 			authorList.add(au);
 		}
 
+		// prepare new book's genre(s)
+		List<Genre> genreList = new ArrayList<>();
+		for (String aGenreId : request.getParameterValues("genres")) {
+			Genre gn = new Genre();
+			gn.setGenreId(Integer.valueOf(aGenreId));
+			genreList.add(gn);
+		}
+
+		// prepare new book's publisher
+		Publisher pb = new Publisher();
+		pb.setPubId(Integer.valueOf(request.getParameter("publisher")));
+
 		AdminService service = new AdminService();
 		try {
-			// service.addBook(book);
-			service.addBookAuthor(book, authorList);
+			service.addBook(book, authorList, genreList, pb);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

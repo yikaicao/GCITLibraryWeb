@@ -12,7 +12,6 @@ public abstract class BaseDAO {
 
 	// for pagination
 	private Integer pageNo;
-	@SuppressWarnings("unused")
 	private Integer pageSize = 10;
 
 	public BaseDAO(Connection conn) {

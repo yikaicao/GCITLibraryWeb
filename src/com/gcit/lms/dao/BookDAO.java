@@ -9,7 +9,8 @@ import java.util.List;
 
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
-import com.gcit.lms.service.ConnectionUtil;
+import com.gcit.lms.entity.Genre;
+import com.gcit.lms.entity.Publisher;
 
 public class BookDAO extends BaseDAO {
 	public BookDAO(Connection conn) {
@@ -28,6 +29,7 @@ public class BookDAO extends BaseDAO {
 				new Object[] { branchId });
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Book> readAllBooks(Integer pageNo) throws ClassNotFoundException, SQLException {
 		setPageNo(pageNo);
 		return (List<Book>) read("select * from tbl_book", null);
@@ -83,12 +85,24 @@ public class BookDAO extends BaseDAO {
 		return save("insert into tbl_book (title) values (?)", new Object[] { book.getTitle() });
 	}
 
-	public void addBookAuthor(Integer bookId, List<Author> authorList) throws ClassNotFoundException, SQLException {
+	public void addBookAuthors(Integer bookId, List<Author> authorList) throws ClassNotFoundException, SQLException {
 
 		for (Author au : authorList) {
 			save("insert into tbl_book_authors (bookId, authorId) values (?, ?)",
 					new Object[] { bookId, au.getAuthorId() });
 		}
+	}
+
+	public void addBookGenres(Integer newBookId, List<Genre> genreList) throws ClassNotFoundException, SQLException {
+
+		for (Genre gn : genreList) {
+			save("insert into tbl_book_genres (genre_id, bookId) values (?, ?)",
+					new Object[] { gn.getGenreId(), newBookId });
+		}
+	}
+
+	public void addBookPublisher(Integer newBookId, Publisher pub) throws ClassNotFoundException, SQLException {
+		save("update tbl_book set pubId = ? where bookId = ?", new Object[] { pub.getPubId(), newBookId });
 	}
 
 }

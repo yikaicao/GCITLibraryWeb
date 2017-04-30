@@ -6,8 +6,12 @@ import java.util.List;
 
 import com.gcit.lms.dao.AuthorDAO;
 import com.gcit.lms.dao.BookDAO;
+import com.gcit.lms.dao.GenreDAO;
+import com.gcit.lms.dao.PublisherDAO;
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.Genre;
+import com.gcit.lms.entity.Publisher;
 
 public class AdminService {
 
@@ -51,14 +55,25 @@ public class AdminService {
 		}
 	}
 
-	public void addBookAuthor(Book book, List<Author> authorList) throws SQLException {
+	public void addBook(Book book, List<Author> authorList, List<Genre> genreList, Publisher pb) throws SQLException {
 		Connection conn = null;
 
 		try {
 			conn = ConnectionUtil.getConnection();
 			BookDAO bkDAO = new BookDAO(conn);
+
+			// add a new book to tbl_book
 			Integer newBookId = bkDAO.addBook(book);
-			bkDAO.addBookAuthor(newBookId, authorList);
+
+			// add book author relation
+			bkDAO.addBookAuthors(newBookId, authorList);
+
+			// add book genre relation
+			bkDAO.addBookGenres(newBookId, genreList);
+
+			// add book publisher relation
+			bkDAO.addBookPublisher(newBookId, pb);
+
 			conn.commit();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -142,6 +157,42 @@ public class AdminService {
 		}
 
 		return null;
+	}
+
+	public List<Genre> getAllGenres() throws SQLException {
+		Connection conn = null;
+
+		try {
+			conn = ConnectionUtil.getConnection();
+			GenreDAO gnDAO = new GenreDAO(conn);
+			return gnDAO.readAllGenres();
+
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+		return null;
+
+	}
+
+	public List<Publisher> getAllPublishers() throws SQLException {
+		Connection conn = null;
+
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pbDAO = new PublisherDAO(conn);
+			return pbDAO.readAllPublishers();
+
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+		return null;
+
 	}
 
 	public Integer getAuthorsCount() throws SQLException {
