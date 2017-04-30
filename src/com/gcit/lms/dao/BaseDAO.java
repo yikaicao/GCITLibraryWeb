@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 public abstract class BaseDAO {
@@ -37,9 +38,10 @@ public abstract class BaseDAO {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public void save(String query, Object[] vals) throws ClassNotFoundException, SQLException {
+	public Integer save(String query, Object[] vals) throws ClassNotFoundException, SQLException {
 
-		PreparedStatement pstmt = conn.prepareStatement(query);
+		PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+
 		if (vals != null) {
 			int count = 1;
 			for (Object obj : vals) {
@@ -48,6 +50,13 @@ public abstract class BaseDAO {
 			}
 		}
 		pstmt.executeUpdate();
+		ResultSet rs = pstmt.getGeneratedKeys();
+
+		Integer generatedKey = null;
+		if (rs.next())
+			generatedKey = Integer.valueOf(rs.getInt(1));
+
+		return generatedKey;
 	}
 
 	/**
@@ -65,7 +74,7 @@ public abstract class BaseDAO {
 		if (getPageNo() != null) {
 			index = (getPageNo() - 1) * 10;
 		}
-			query = query + " LIMIT " + index + ", " + pageSize;
+		query = query + " LIMIT " + index + ", " + pageSize;
 
 		PreparedStatement pstmt = conn.prepareStatement(query);
 		if (vals != null) {

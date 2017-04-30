@@ -79,4 +79,16 @@ public class BookDAO extends BaseDAO {
 		return readCount("select count(*) as COUNT from tbl_author", null);
 	}
 
+	public Integer addBook(Book book) throws ClassNotFoundException, SQLException {
+		return save("insert into tbl_book (title) values (?)", new Object[] { book.getTitle() });
+	}
+
+	public void addBookAuthor(Integer bookId, List<Author> authorList) throws ClassNotFoundException, SQLException {
+
+		for (Author au : authorList) {
+			save("insert into tbl_book_authors (bookId, authorId) values (?, ?)",
+					new Object[] { bookId, au.getAuthorId() });
+		}
+	}
+
 }

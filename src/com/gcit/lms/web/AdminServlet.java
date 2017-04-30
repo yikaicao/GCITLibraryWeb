@@ -2,6 +2,7 @@ package com.gcit.lms.web;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -129,10 +130,25 @@ public class AdminServlet extends HttpServlet {
 	}
 
 	private void addBook(HttpServletRequest request) {
+		// prepare new book's title
 		Book book = new Book();
-		System.out.println(request.getParameter("bookTitle"));
-		
-		System.out.println(request.getParameterValues("authors").length);
+		book.setTitle(request.getParameter("bookTitle"));
+
+		// prepare new book's author(s)
+		List<Author> authorList = new ArrayList<>();
+		for (String anAuthorId : request.getParameterValues("authors")) {
+			Author au = new Author();
+			au.setAuthorId(Integer.valueOf(anAuthorId));
+			authorList.add(au);
+		}
+
+		AdminService service = new AdminService();
+		try {
+			// service.addBook(book);
+			service.addBookAuthor(book, authorList);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void pageAuthors(HttpServletRequest request) {

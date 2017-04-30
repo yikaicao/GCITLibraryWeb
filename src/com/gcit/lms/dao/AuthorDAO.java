@@ -37,7 +37,7 @@ public class AuthorDAO extends BaseDAO {
 	}
 
 	public List<Author> readAllAuthors() throws SQLException {
-		return (List<Author>) read("select * from tbl_author", null);
+		return (List<Author>) readFirstLevel("select * from tbl_author", null);
 	}
 
 	public List<Author> readAllAuthorsByName(String authorName) throws SQLException {
