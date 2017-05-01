@@ -42,7 +42,7 @@
 <script>
 	function searchItems() {
 		$.ajax({
-			url : "searchPublishers",
+			url : "searchBranches",
 			data : {
 				searchString : $('#searchString').val(),
 				pageNo : 1
@@ -56,7 +56,7 @@
 
 	function searchItemsPage(pageNo) {
 		$.ajax({
-			url : "searchPublishers",
+			url : "searchBranches",
 			data : {
 				searchString : $('#searchString').val(),
 				pageNo : pageNo

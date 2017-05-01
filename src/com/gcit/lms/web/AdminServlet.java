@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.Borrower;
 import com.gcit.lms.entity.Branch;
 import com.gcit.lms.entity.Genre;
 import com.gcit.lms.entity.Publisher;
@@ -25,7 +26,7 @@ import com.gcit.lms.service.AdminService;
 @WebServlet({ "/addAuthor", "/editAuthor", "/deleteAuthor", "/pageAuthors", "/searchAuthors", "/addBook", "/editBook",
 		"/deleteBook", "/pageBooks", "/searchBooks", "/addPublisher", "/editPublisher", "/deletePublisher",
 		"/pagePublishers", "/searchPublishers", "/addBranch", "/editBranch", "/deleteBranch", "/pageBranches",
-		"/searchBranches" })
+		"/searchBranches", "/addBorrower", "/editBorrower", "/deleteBorrower", "/pageBorrowers", "/searchBorrowers" })
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -83,6 +84,15 @@ public class AdminServlet extends HttpServlet {
 			break;
 		case "/searchBranches":
 			data = searchBranches(request);
+			response.getWriter().write(data);
+			isAjax = Boolean.TRUE;
+			break;
+		case "/pageBorrowers":
+			pageBorrowers(request);
+			forwardPath = "/borrowers.jsp";
+			break;
+		case "/searchBorrowers":
+			data = searchBorrowers(request);
 			response.getWriter().write(data);
 			isAjax = Boolean.TRUE;
 			break;
@@ -152,6 +162,18 @@ public class AdminServlet extends HttpServlet {
 		case "/deleteBranch":
 			deleteBranch(request);
 			forwardPath = "/branches.jsp";
+			break;
+		case "/addBorrower":
+			addBorrower(request);
+			forwardPath = "/borrowers.jsp";
+			break;
+		case "/editBorrower":
+			editBorrower(request);
+			forwardPath = "/borrowers.jsp";
+			break;
+		case "/deleteBorrower":
+			deleteBorrower(request);
+			forwardPath = "/borrowers.jsp";
 			break;
 		}
 
@@ -370,6 +392,53 @@ public class AdminServlet extends HttpServlet {
 		}
 	}
 
+	private void addBorrower(HttpServletRequest request) {
+		Borrower br = new Borrower();
+
+		br.setName(request.getParameter("name"));
+		br.setAddress(request.getParameter("address"));
+		br.setPhone(request.getParameter("phone"));
+
+		AdminService service = new AdminService();
+
+		try {
+			service.addBorrower(br);
+			request.setAttribute("message", "Add Success");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Add Failed");
+			e.printStackTrace();
+		}
+	}
+
+	private void editBorrower(HttpServletRequest request) {
+		Borrower bo = new Borrower();
+
+		bo.setCardNo(Integer.valueOf(request.getParameter("borrowerId")));
+		bo.setName(request.getParameter("borrowerName"));
+		bo.setAddress(request.getParameter("borrowerAddress"));
+		bo.setPhone(request.getParameter("borrowerPhone"));
+
+		AdminService service = new AdminService();
+		try {
+			service.editBorrower(bo);
+			request.setAttribute("message", "Edit Success");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Edit Failed");
+			e.printStackTrace();
+		}
+	}
+
+	private void deleteBorrower(HttpServletRequest request) {
+		AdminService service = new AdminService();
+		try {
+			service.deleteBorrowerById(Integer.parseInt(request.getParameter("borrowerId")));
+			request.setAttribute("message", "Delete Success");
+		} catch (NumberFormatException | SQLException e) {
+			request.setAttribute("message", "Delete Failed");
+			e.printStackTrace();
+		}
+	}
+
 	private void pageAuthors(HttpServletRequest request) {
 		Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
 		AdminService service = new AdminService();
@@ -415,6 +484,19 @@ public class AdminServlet extends HttpServlet {
 
 		try {
 			request.setAttribute("branches", service.getAllBranchesOnPage(pageNo));
+			request.setAttribute("pageNo", pageNo);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void pageBorrowers(HttpServletRequest request) {
+		Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
+		AdminService service = new AdminService();
+
+		try {
+			request.setAttribute("borrowers", service.getAllBooksOnPage(pageNo));
 			request.setAttribute("pageNo", pageNo);
 
 		} catch (SQLException e) {
@@ -574,7 +656,7 @@ public class AdminServlet extends HttpServlet {
 		try {
 			List<Publisher> pubs = service.getPublisherByName(pageNo, searchString);
 			strBuf.append(
-					"<thead><tr><th>#</th><th>Publisher Name</th><th>Address</th><th>Phone</th></tr></thead><tbody>");
+					"<thead><tr><th>#</th><th>Publisher Name</th><th>Address</th><th>Phone</th><th>Operation</th></tr></thead><tbody>");
 
 			// prepare searched books
 			for (Publisher pb : pubs) {
@@ -640,8 +722,146 @@ public class AdminServlet extends HttpServlet {
 	}
 
 	private String searchBranches(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		String searchString = request.getParameter("searchString");
+		Integer pageNo = Integer.valueOf(request.getParameter("pageNo"));
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+
+		try {
+			List<Branch> branches = service.getBranchesByName(pageNo, searchString);
+			strBuf.append(
+					"<thead><tr><th>#</th><th>Branch Name</th><th>Address</th><th>Operation</th></tr></thead><tbody>");
+
+			// prepare searched books
+			for (Branch br : branches) {
+				strBuf.append("<tr>");
+
+				strBuf.append("<td>");
+				strBuf.append(branches.indexOf(br) + 1);
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				strBuf.append(br.getBranchName());
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				strBuf.append(br.getBranchAddress());
+				strBuf.append("</td>");
+
+				strBuf.append(
+						"<td><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#modalConnector' href='modal/editbranch.jsp?branchId="
+								+ br.getBranchId() + "' style='margin-right: 2%;'>Update</button>");
+
+				strBuf.append(
+						"<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#modalConnector' href='modal/deletebranch.jsp?branchId="
+								+ br.getBranchId() + "'>Delete</button></td>");
+
+				strBuf.append("</tr>");
+			}
+			strBuf.append("</tbody>");
+
+			// special separator
+			strBuf.append("\n");
+
+			// add new pagination for search result
+			strBuf.append("<ul class='pagination' id='paginationList'>");
+
+			Integer previousPageNo = Integer.valueOf(request.getParameter("pageNo")) - 1;
+			Integer nextPageNo = Integer.valueOf(request.getParameter("pageNo")) + 1;
+
+			strBuf.append("<li><a onclick='searchItemsPage(" + previousPageNo
+					+ ")' aria-label='Previous'> <span aria-hidden='true'>&laquo;</span></a></li>");
+
+			branches = service.getBranchesByName(searchString);
+			int pageCount = branches.size() / 10;
+			if (branches.size() % 10 != 0)
+				pageCount += 1;
+			for (int i = 1; i <= pageCount; i++) {
+				strBuf.append("<li><a onclick='searchItemsPage(" + i + ")' id='pageNav'>" + i + "</a></li>");
+			}
+
+			strBuf.append("<li><a onclick='searchItemsPage(" + nextPageNo
+					+ ")' aria-label='Next'> <span aria-hidden='true'>&raquo;</span></a></li>");
+
+			strBuf.append("</ul"); // end pagination
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
 	}
 
+	private String searchBorrowers(HttpServletRequest request) {
+		String searchString = request.getParameter("searchString");
+		Integer pageNo = Integer.valueOf(request.getParameter("pageNo"));
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+
+		try {
+			List<Borrower> borrowers = service.getBorrowersByName(pageNo, searchString);
+			strBuf.append(
+					"<thead><tr><th>#</th><th>Name</th><th>Address</th><th>Phone</th><th>Operation</th></tr></thead><tbody>");
+
+			// prepare searched books
+			for (Borrower bo : borrowers) {
+				strBuf.append("<tr>");
+
+				strBuf.append("<td>");
+				strBuf.append(borrowers.indexOf(bo) + 1);
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				strBuf.append(bo.getName());
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				strBuf.append(bo.getAddress());
+				strBuf.append("</td>");
+				
+				strBuf.append("<td>");
+				strBuf.append(bo.getPhone());
+				strBuf.append("</td>");
+
+				strBuf.append(
+						"<td><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#modalConnector' href='modal/editborrower.jsp?borrowerId="
+								+ bo.getCardNo() + "' style='margin-right: 2%;'>Update</button>");
+
+				strBuf.append(
+						"<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#modalConnector' href='modal/deleteborrower.jsp?borrowerId="
+								+ bo.getCardNo() + "'>Delete</button></td>");
+
+				strBuf.append("</tr>");
+			}
+			strBuf.append("</tbody>");
+
+			// special separator
+			strBuf.append("\n");
+
+			// add new pagination for search result
+			strBuf.append("<ul class='pagination' id='paginationList'>");
+
+			Integer previousPageNo = Integer.valueOf(request.getParameter("pageNo")) - 1;
+			Integer nextPageNo = Integer.valueOf(request.getParameter("pageNo")) + 1;
+
+			strBuf.append("<li><a onclick='searchItemsPage(" + previousPageNo
+					+ ")' aria-label='Previous'> <span aria-hidden='true'>&laquo;</span></a></li>");
+
+			borrowers = service.getBorrowersByName(searchString);
+			int pageCount = borrowers.size() / 10;
+			if (borrowers.size() % 10 != 0)
+				pageCount += 1;
+			for (int i = 1; i <= pageCount; i++) {
+				strBuf.append("<li><a onclick='searchItemsPage(" + i + ")' id='pageNav'>" + i + "</a></li>");
+			}
+
+			strBuf.append("<li><a onclick='searchItemsPage(" + nextPageNo
+					+ ")' aria-label='Next'> <span aria-hidden='true'>&raquo;</span></a></li>");
+
+			strBuf.append("</ul"); // end pagination
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
+	}
 }

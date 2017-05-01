@@ -83,7 +83,7 @@
 				<li><a href="borrowers.jsp">All Borrowers</a></li>
 			</ul>
 			<ul class="nav nav-sidebar">
-				<li><a href="">Override Due Date</a></li>
+				<li><a href="bookloans.jsp">Override Due Date</a></li>
 			</ul>
 		</div>
 

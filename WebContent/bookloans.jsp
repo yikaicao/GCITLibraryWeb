@@ -1,10 +1,9 @@
+<%@page import="com.gcit.lms.entity.BookLoan"%>
 <%@include file="header.html"%>
 
-<%@page import="com.gcit.lms.entity.Author"%>
-<%@page import="com.gcit.lms.entity.Book"%>
-<%@page import="com.gcit.lms.service.AdminService"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
+<%@page import="com.gcit.lms.service.AdminService"%>
 
 <head>
 <!-- Custom styles for this template -->
@@ -16,19 +15,19 @@
 	AdminService service = new AdminService();
 
 	Integer numOfPages = 0;
-	Integer booksCount = service.getCount("book");
+	Integer itemCount = service.getCount("bookloan");
 
-	if (booksCount % 10 > 0)
-		numOfPages = booksCount / 10 + 1;
+	if (itemCount % 10 > 0)
+		numOfPages = itemCount / 10 + 1;
 	else
-		numOfPages = booksCount / 10;
+		numOfPages = itemCount / 10;
 
-	List<Book> books = new ArrayList<>();
+	List<BookLoan> blList = new ArrayList<>();
 
-	if (request.getAttribute("books") != null)
-		books = (List<Book>) request.getAttribute("books");
+	if (request.getAttribute("branches") != null)
+		blList = (List<BookLoan>) request.getAttribute("bookloan");
 	else
-		books = service.getAllBooksOnPage(1);
+		blList = service.getAllBookLoansOnPage(1);
 
 	Integer pageNo;
 	if (request.getAttribute("pageNo") == null)
@@ -39,31 +38,32 @@
 	Integer nextPageNo = pageNo == numOfPages ? numOfPages : pageNo + 1;
 %>
 
+
 <script>
-	function searchBooks() {
+	function searchItems() {
 		$.ajax({
-			url : "searchBooks",
+			url : "searchBorrowers",
 			data : {
 				searchString : $('#searchString').val(),
 				pageNo : 1
 			}
 		}).done(function(data) {
 			var array_data = String(data).split("\n");
-			$('#booksTable').html($.trim(array_data[0]));
+			$('#itemsTable').html($.trim(array_data[0]));
 			$('#paginationList').html($.trim(array_data[1]));
 		})
 	};
 
-	function searchBooksPage(pageNo) {
+	function searchItemsPage(pageNo) {
 		$.ajax({
-			url : "searchBooks",
+			url : "searchBorrowers",
 			data : {
 				searchString : $('#searchString').val(),
 				pageNo : pageNo
 			}
 		}).done(function(data) {
 			var array_data = String(data).split("\n");
-			$('#booksTable').html($.trim(array_data[0]));
+			$('#itemsTable').html($.trim(array_data[0]));
 			$('#paginationList').html($.trim(array_data[1]));
 		})
 	};
@@ -76,31 +76,31 @@
 				<li><a href="admin.jsp">Overview</a></li>
 			</ul>
 			<ul class="nav nav-sidebar">
-
-				<li><a href="authors.jsp">All Authors</a></li>
-				<li class="active"><a href="books.jsp">All Books<span
-						class="sr-only">(current)</span></a></li>
+				<li><a href="authors.jsp">All Authors </a></li>
+				<li><a href="books.jsp">All Books</a></li>
 				<li><a href="publishers.jsp">All Publishers</a></li>
 				<li><a href="branches.jsp">All Branches</a></li>
 				<li><a href="borrowers.jsp">All Borrowers</a></li>
 			</ul>
 			<ul class="nav nav-sidebar">
-				<li><a href="bookloans.jsp">Override Due Date</a></li>
+				<li class="active"><a href="">Override Due Date<span
+						class="sr-only">(current)</span></a></li>
 			</ul>
 		</div>
 
 
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 			<h5>${message}</h5>
-			<h2 class="sub-header">Book List</h2>
+
+			<h2 class="sub-header">Book Loan List</h2>
 
 			<!-- Search -->
 			<div class="row">
 				<div class="col-lg-6">
 					<div class="input-group" style="display: inline;">
 						<input type="text" class="form-control"
-							placeholder="Search for Book" style="border-radius: 5px;"
-							name="searchString" id="searchString" oninput="searchBooks()">
+							placeholder="Search for Borrower" style="border-radius: 5px;"
+							name="searchString" id="searchString" oninput="searchItems()">
 						<span class="input-group-btn"> </span>
 					</div>
 					<!-- /input-group -->
@@ -111,14 +111,17 @@
 			<!-- Search -->
 
 
-			<!-- Table -->
+
 			<div class="table-responsive">
-				<table class="table table-striped" id="booksTable">
+				<table class="table table-striped" id="itemsTable">
 					<thead>
 						<tr>
 							<th>#</th>
-							<th>Title</th>
-							<th>Author</th>
+							<th>Book</th>
+							<th>Branch</th>
+							<th>Borrower</th>
+							<th>Date Out</th>
+							<th>Due Date</th>
 							<th>Operation</th>
 						</tr>
 					</thead>
@@ -126,7 +129,7 @@
 
 						<%
 							int counter = 0;
-							for (Book bk : books) {
+							for (BookLoan bl : blList) {
 						%>
 						<tr>
 							<td>
@@ -137,31 +140,23 @@
 
 							<td>
 								<%
-									out.println(bk.getTitle());
+									out.println(bl.getBookId());
 								%>
 							</td>
+
 							<td>
 								<%
-									int commaFlag = 0;
-										for (Author au : bk.getAuthors()) {
-											if (commaFlag == 0)
-												out.print(au.getAuthorName());
-											else
-												out.print(", " + au.getAuthorName());
-											commaFlag = 1;
-										}
+									out.println(bl.getBranchId());
 								%>
 							</td>
 
 
-							<td><button type="button" class="btn btn-primary"
-									data-toggle="modal" data-target="#modalConnector"
-									href="modal/editbook.jsp?bookId=<%=bk.getBookId()%>"
-									style="margin-right: 2%;">Update</button>
-								<button type="button" class="btn btn-danger" data-toggle="modal"
-									data-target="#modalConnector"
-									href="modal/deletebook.jsp?bookId=<%=bk.getBookId()%>">Delete</button>
+							<td>
+								<%
+									out.println(bl.getCardNo());
+								%>
 							</td>
+
 						</tr>
 
 						<%
@@ -171,8 +166,6 @@
 					</tbody>
 				</table>
 			</div>
-			<!-- /.Table -->
-
 
 			<!-- Modal Connector -->
 			<div class="modal fade" tabindex="-1" role="dialog"
@@ -190,29 +183,29 @@
 			<!-- Pagination -->
 			<nav aria-label="Page navigation">
 				<ul class="pagination" id="paginationList">
-					<li><a href="pageBooks?pageNo=<%=previousPageNo%>"
+					<li><a href="pageBorrowers?pageNo=<%=previousPageNo%>"
 						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 					</a></li>
 
 					<%
 						for (int i = 1; i <= numOfPages; i++) {
 					%>
-					<li><a href="pageBooks?pageNo=<%=i%>"><%=i%></a></li>
+					<li><a href="pageBorrowers?pageNo=<%=i%>"><%=i%></a></li>
 					<%
 						}
 					%>
-					<li><a href="pageBooks?pageNo=<%=nextPageNo%>"
+					<li><a href="pageBorrowers?pageNo=<%=nextPageNo%>"
 						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 					</a></li>
 				</ul>
 			</nav>
 			<!-- End Pagination -->
 
+
 			<!-- Add Button -->
 			<button type="button" class="btn btn-success"
 				style="display: inline; float: left;" data-toggle="modal"
-				data-target="#modalConnector" href="modal/addbook.jsp?">Add</button>
-
+				data-target="#modalConnector" href="modal/addborrower.jsp?">Add</button>
 			<!-- /.Add Button -->
 
 		</div>

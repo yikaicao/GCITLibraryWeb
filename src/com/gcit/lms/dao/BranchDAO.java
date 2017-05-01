@@ -90,4 +90,18 @@ public class BranchDAO extends BaseDAO {
 		save("delete from tbl_library_branch where branchId = ?", new Object[] { pk });
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Branch> readAllBranchesByName(Integer pageNo, String searchString) throws SQLException {
+		setPageNo(pageNo);
+		searchString = "%" + searchString + "%";
+		return (List<Branch>) read("select * from tbl_library_branch where branchName like ?",
+				new Object[] { searchString });
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Branch> readAllBranchesByName(String searchString) throws SQLException {
+		return (List<Branch>) readFirstLevel("select * from tbl_library_branch where branchName like ?",
+				new Object[] { searchString });
+	}
+
 }

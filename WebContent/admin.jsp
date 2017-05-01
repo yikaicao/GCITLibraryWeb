@@ -25,7 +25,7 @@
 						<li><a href="borrowers.jsp">All Borrowers</a></li>
 					</ul>
 					<ul class="nav nav-sidebar">
-						<li><a href="">Override Due Date</a></li>
+						<li><a href="bookloans.jsp">Override Due Date</a></li>
 					</ul>
 				</div>
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
