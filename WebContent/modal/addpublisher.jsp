@@ -5,7 +5,7 @@
 			aria-label="Close">
 			<span aria-hidden="true">&times;</span>
 		</button>
-		<h4 class="modal-title">Update Publisher Details</h4>
+		<h4 class="modal-title">Enter New Publisher Details</h4>
 	</div>
 	<form action="addPublisher" method="post">
 		<div class="modal-body">

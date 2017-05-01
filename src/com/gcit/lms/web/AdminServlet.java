@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.Branch;
 import com.gcit.lms.entity.Genre;
 import com.gcit.lms.entity.Publisher;
 import com.gcit.lms.service.AdminService;
@@ -23,7 +24,8 @@ import com.gcit.lms.service.AdminService;
  */
 @WebServlet({ "/addAuthor", "/editAuthor", "/deleteAuthor", "/pageAuthors", "/searchAuthors", "/addBook", "/editBook",
 		"/deleteBook", "/pageBooks", "/searchBooks", "/addPublisher", "/editPublisher", "/deletePublisher",
-		"/pagePublishers", "/searchPublishers" })
+		"/pagePublishers", "/searchPublishers", "/addBranch", "/editBranch", "/deleteBranch", "/pageBranches",
+		"/searchBranches" })
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -72,6 +74,15 @@ public class AdminServlet extends HttpServlet {
 			break;
 		case "/searchPublishers":
 			data = searchPublishers(request);
+			response.getWriter().write(data);
+			isAjax = Boolean.TRUE;
+			break;
+		case "/pageBranches":
+			pageBranches(request);
+			forwardPath = "/branches.jsp";
+			break;
+		case "/searchBranches":
+			data = searchBranches(request);
 			response.getWriter().write(data);
 			isAjax = Boolean.TRUE;
 			break;
@@ -129,6 +140,18 @@ public class AdminServlet extends HttpServlet {
 		case "/deletePublisher":
 			deletePublisher(request);
 			forwardPath = "/publishers.jsp";
+			break;
+		case "/addBranch":
+			addBranch(request);
+			forwardPath = "/branches.jsp";
+			break;
+		case "/editBranch":
+			editBranch(request);
+			forwardPath = "/branches.jsp";
+			break;
+		case "/deleteBranch":
+			deleteBranch(request);
+			forwardPath = "/branches.jsp";
 			break;
 		}
 
@@ -302,6 +325,51 @@ public class AdminServlet extends HttpServlet {
 		}
 	}
 
+	private void addBranch(HttpServletRequest request) {
+		Branch br = new Branch();
+
+		br.setBranchName(request.getParameter("branchName"));
+		br.setBranchAddress(request.getParameter("branchAddress"));
+
+		AdminService service = new AdminService();
+
+		try {
+			service.addBranch(br);
+			request.setAttribute("message", "Add Success");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Add Failed");
+			e.printStackTrace();
+		}
+	}
+
+	private void editBranch(HttpServletRequest request) {
+		Branch br = new Branch();
+
+		br.setBranchId(Integer.valueOf(request.getParameter("branchId")));
+		br.setBranchName(request.getParameter("branchName"));
+		br.setBranchAddress(request.getParameter("branchAddress"));
+
+		AdminService service = new AdminService();
+		try {
+			service.editBranch(br);
+			request.setAttribute("message", "Edit Success");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Edit Failed");
+			e.printStackTrace();
+		}
+	}
+
+	private void deleteBranch(HttpServletRequest request) {
+		AdminService service = new AdminService();
+		try {
+			service.deleteBranchById(Integer.parseInt(request.getParameter("branchId")));
+			request.setAttribute("message", "Delete Success");
+		} catch (NumberFormatException | SQLException e) {
+			request.setAttribute("message", "Delete Failed");
+			e.printStackTrace();
+		}
+	}
+
 	private void pageAuthors(HttpServletRequest request) {
 		Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
 		AdminService service = new AdminService();
@@ -334,6 +402,19 @@ public class AdminServlet extends HttpServlet {
 
 		try {
 			request.setAttribute("publishers", service.getAllPublishersOnPage(pageNo));
+			request.setAttribute("pageNo", pageNo);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void pageBranches(HttpServletRequest request) {
+		Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
+		AdminService service = new AdminService();
+
+		try {
+			request.setAttribute("branches", service.getAllBranchesOnPage(pageNo));
 			request.setAttribute("pageNo", pageNo);
 
 		} catch (SQLException e) {
@@ -540,7 +621,6 @@ public class AdminServlet extends HttpServlet {
 					+ ")' aria-label='Previous'> <span aria-hidden='true'>&laquo;</span></a></li>");
 
 			pubs = service.getPublisherByName(searchString);
-			System.out.println("pubs size = " + pubs.size());
 			int pageCount = pubs.size() / 10;
 			if (pubs.size() % 10 != 0)
 				pageCount += 1;
@@ -557,6 +637,11 @@ public class AdminServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		return strBuf.toString();
+	}
+
+	private String searchBranches(HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

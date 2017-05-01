@@ -72,4 +72,22 @@ public class BranchDAO extends BaseDAO {
 		return (List<Branch>) read("select * from tbl_library_branch", null);
 	}
 
+	@SuppressWarnings("unchecked")
+	public Branch readBranchByID(Integer pk) throws SQLException {
+		List<Branch> branchList = (List<Branch>) read("select * from tbl_library_branch where branchId = ?",
+				new Object[] { pk });
+		if (branchList != null && !branchList.isEmpty())
+			return branchList.get(0);
+		return null;
+	}
+
+	public void updateBranch(Branch br) throws ClassNotFoundException, SQLException {
+		save("update tbl_library_branch set branchName = ?, branchAddress = ? where branchId = ?",
+				new Object[] { br.getBranchName(), br.getBranchAddress(), br.getBranchId() });
+	}
+
+	public void deleteBranchById(int pk) throws ClassNotFoundException, SQLException {
+		save("delete from tbl_library_branch where branchId = ?", new Object[] { pk });
+	}
+
 }

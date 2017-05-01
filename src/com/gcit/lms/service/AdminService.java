@@ -166,7 +166,7 @@ public class AdminService {
 		}
 		return null;
 	}
-	
+
 	public List<Branch> getAllBranchesOnPage(Integer pageNo) throws SQLException {
 		Connection conn = null;
 		try {
@@ -295,6 +295,22 @@ public class AdminService {
 			conn = ConnectionUtil.getConnection();
 			PublisherDAO pbDAO = new PublisherDAO(conn);
 			return pbDAO.readPublisherByID(pubId);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
+	public Branch getBranchByPk(Integer pk) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brDAO = new BranchDAO(conn);
+			return brDAO.readBranchByID(pk);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -486,7 +502,6 @@ public class AdminService {
 		}
 	}
 
-	
 	public void deletePublisherById(int pubId) throws SQLException {
 		Connection conn = null;
 		try {
@@ -525,7 +540,7 @@ public class AdminService {
 		try {
 			conn = ConnectionUtil.getConnection();
 			PublisherDAO pbDAO = new PublisherDAO(conn);
-			return pbDAO.readAllPublisherByName( searchString);
+			return pbDAO.readAllPublisherByName(searchString);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -534,5 +549,56 @@ public class AdminService {
 			}
 		}
 		return null;
+	}
+
+	public void addBranch(Branch br) throws SQLException {
+		Connection conn = null;
+
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brDAO = new BranchDAO(conn);
+			brDAO.addBranch(br);
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	public void editBranch(Branch br) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brDAO = new BranchDAO(conn);
+			brDAO.updateBranch(br);
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	public void deleteBranchById(int pk) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brDAO = new BranchDAO(conn);
+			brDAO.deleteBranchById(pk);
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
 	}
 }

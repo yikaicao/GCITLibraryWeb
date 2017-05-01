@@ -150,11 +150,11 @@
 
 							<td><button type="button" class="btn btn-primary"
 									data-toggle="modal" data-target="#modalConnector"
-									href="modal/editpublisher.jsp?publisherId=<%=br.getBranchId()%>"
+									href="modal/editbranch.jsp?branchId=<%=br.getBranchId()%>"
 									style="margin-right: 2%;">Update</button>
 								<button type="button" class="btn btn-danger" data-toggle="modal"
 									data-target="#modalConnector"
-									href="modal/deletepublisher.jsp?publisherId=<%=br.getBranchId()%>">Delete</button>
+									href="modal/deletebranch.jsp?branchId=<%=br.getBranchId()%>">Delete</button>
 							</td>
 
 						</tr>
@@ -183,18 +183,18 @@
 			<!-- Pagination -->
 			<nav aria-label="Page navigation">
 				<ul class="pagination" id="paginationList">
-					<li><a href="pagePublishers?pageNo=<%=previousPageNo%>"
+					<li><a href="pageBranches?pageNo=<%=previousPageNo%>"
 						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 					</a></li>
 
 					<%
 						for (int i = 1; i <= numOfPages; i++) {
 					%>
-					<li><a href="pagePublishers?pageNo=<%=i%>"><%=i%></a></li>
+					<li><a href="pageBranches?pageNo=<%=i%>"><%=i%></a></li>
 					<%
 						}
 					%>
-					<li><a href="pagePublishers?pageNo=<%=nextPageNo%>"
+					<li><a href="pageBranches?pageNo=<%=nextPageNo%>"
 						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 					</a></li>
 				</ul>
@@ -205,7 +205,7 @@
 			<!-- Add Button -->
 			<button type="button" class="btn btn-success"
 				style="display: inline; float: left;" data-toggle="modal"
-				data-target="#modalConnector" href="modal/addpublisher.jsp?">Add</button>
+				data-target="#modalConnector" href="modal/addbranch.jsp?">Add</button>
 			<!-- /.Add Button -->
 
 		</div>
