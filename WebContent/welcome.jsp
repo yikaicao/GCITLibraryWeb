@@ -16,11 +16,11 @@
 					<h3>Your Local Luxury Lounge</h3>
 					<hr class="intro-divider">
 					<ul class="list-inline intro-social-buttons">
-						<li><a href="#"
+						<li><a href="borrower.jsp"
 							class="btn btn-default btn-lg"><i class="fa fa-user fa-fw"></i>
 								<span class="network-name">Borrower</span></a></li>
 						<li><a
-							href="#"
+							href="librarian.jsp"
 							class="btn btn-default btn-lg"><i class="fa fa-user-md fa-fw"></i>
 								<span class="network-name">Librarian</span></a></li>
 						<li><a href="admin.jsp" class="btn btn-default btn-lg"><i

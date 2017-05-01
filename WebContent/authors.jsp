@@ -194,12 +194,6 @@
 			<!-- End Pagination -->
 
 
-			<!-- Add Button -->
-			<button type="button" class="btn btn-success"
-				style="display: inline; float: left;" data-toggle="modal"
-				data-target="#modalConnector" href="modal/addauthor.jsp?">Add</button>
-			<!-- /.Add Button -->
-
 		</div>
 	</div>
 </div>

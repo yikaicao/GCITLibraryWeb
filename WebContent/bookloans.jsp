@@ -83,7 +83,7 @@
 				<li><a href="borrowers.jsp">All Borrowers</a></li>
 			</ul>
 			<ul class="nav nav-sidebar">
-				<li class="active"><a href="">Override Due Date<span
+				<li class="active"><a href="bookloans.jsp">Override Due Date<span
 						class="sr-only">(current)</span></a></li>
 			</ul>
 		</div>
@@ -122,7 +122,7 @@
 							<th>Borrower</th>
 							<th>Date Out</th>
 							<th>Due Date</th>
-							<th>Operation</th>
+							<th>Return</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -140,21 +140,52 @@
 
 							<td>
 								<%
-									out.println(bl.getBookId());
+									out.println(service.getBookByPk(bl.getBookId()).getTitle());
 								%>
 							</td>
 
 							<td>
 								<%
-									out.println(bl.getBranchId());
+									out.println(service.getBranchByPk(bl.getBranchId()).getBranchName());
 								%>
 							</td>
 
 
 							<td>
 								<%
-									out.println(bl.getCardNo());
+									out.println(service.getBorrowerByPk(bl.getCardNo()).getName());
 								%>
+							</td>
+
+							<td>
+								<%
+									out.println(bl.getDateOut().toString());
+								%>
+							</td>
+
+
+							<td>
+								<%
+									out.print(bl.getDueDate().toString());
+								%>
+							</td>
+
+							<td>
+								<%
+									if (bl.getDateIn() != null) {
+											out.println(bl.getDateIn().toString());
+										} else {
+								%>
+								<button type="button" class="btn btn-primary"
+									data-toggle="modal" data-target="#modalConnector"
+									href="modal/changeduedate.jsp?bookId=<%=bl.getBookId()%>&branchId=<%=bl.getBranchId()%>&cardNo=<%=bl.getCardNo()%>">
+									Update</button>
+								<button type="button" class="btn btn-warning"
+									data-toggle="modal" data-target="#modalConnector"
+									href="modal/returnbookloan.jsp?bookId=<%=bl.getBookId()%>&branchId=<%=bl.getBranchId()%>&cardNo=<%=bl.getCardNo()%>">
+									Return</button> <%
+ 	}
+ %>
 							</td>
 
 						</tr>
@@ -201,12 +232,6 @@
 			</nav>
 			<!-- End Pagination -->
 
-
-			<!-- Add Button -->
-			<button type="button" class="btn btn-success"
-				style="display: inline; float: left;" data-toggle="modal"
-				data-target="#modalConnector" href="modal/addborrower.jsp?">Add</button>
-			<!-- /.Add Button -->
 
 		</div>
 	</div>

@@ -276,7 +276,7 @@ public class AdminService {
 		}
 		return null;
 	}
-	
+
 	public List<BookLoan> getAllBookLoansOnPage(Integer pageNo) throws SQLException {
 		Connection conn = null;
 		try {
@@ -775,5 +775,39 @@ public class AdminService {
 			}
 		}
 		return null;
+	}
+
+	public void updateDueDate(BookLoan bl) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookLoanDAO blDAO = new BookLoanDAO(conn);
+			blDAO.updateDueDate(bl);
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	public void returnBookLoan(BookLoan bl) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookLoanDAO blDAO = new BookLoanDAO(conn);
+			blDAO.returnBookLoan(bl);
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
 	}
 }

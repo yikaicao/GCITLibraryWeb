@@ -58,4 +58,15 @@ public class BookLoanDAO extends BaseDAO {
 		setPageNo(pageNo);
 		return (List<BookLoan>) read("select * from tbl_book_loans", null);
 	}
+
+	public void updateDueDate(BookLoan bl) throws ClassNotFoundException, SQLException {
+		save("update tbl_book_loans set dueDate = ? where bookId = ? and branchId = ? and cardNo = ?",
+				new Object[] { bl.getDueDate(), bl.getBookId(), bl.getBranchId(), bl.getCardNo() });
+	}
+
+	public void returnBookLoan(BookLoan bl) throws ClassNotFoundException, SQLException {
+		save("update tbl_book_loans set dateIn = ? where bookId = ? and branchId = ? and cardNo = ?",
+				new Object[] { bl.getDateIn(), bl.getBookId(), bl.getBranchId(), bl.getCardNo() });
+		
+	}
 }

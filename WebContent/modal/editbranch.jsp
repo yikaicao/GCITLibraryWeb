@@ -25,6 +25,7 @@
 				value="<%=br.getBranchAddress()%>" placeholder="New Address"
 				required> <br /> <input type="hidden" name="branchId"
 				value="<%=br.getBranchId()%>">
+				<input type="hidden" name="redirect" value="<%=request.getParameter("redirect")%>">
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

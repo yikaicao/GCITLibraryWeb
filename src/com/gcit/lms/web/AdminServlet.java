@@ -1,9 +1,12 @@
 package com.gcit.lms.web;
 
 import java.io.IOException;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.sql.Date;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.BookLoan;
 import com.gcit.lms.entity.Borrower;
 import com.gcit.lms.entity.Branch;
 import com.gcit.lms.entity.Genre;
@@ -26,7 +30,8 @@ import com.gcit.lms.service.AdminService;
 @WebServlet({ "/addAuthor", "/editAuthor", "/deleteAuthor", "/pageAuthors", "/searchAuthors", "/addBook", "/editBook",
 		"/deleteBook", "/pageBooks", "/searchBooks", "/addPublisher", "/editPublisher", "/deletePublisher",
 		"/pagePublishers", "/searchPublishers", "/addBranch", "/editBranch", "/deleteBranch", "/pageBranches",
-		"/searchBranches", "/addBorrower", "/editBorrower", "/deleteBorrower", "/pageBorrowers", "/searchBorrowers" })
+		"/searchBranches", "/addBorrower", "/editBorrower", "/deleteBorrower", "/pageBorrowers", "/searchBorrowers",
+		"/editDueDate", "/returnBookLoan" })
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -158,6 +163,8 @@ public class AdminServlet extends HttpServlet {
 		case "/editBranch":
 			editBranch(request);
 			forwardPath = "/branches.jsp";
+			if (request.getParameter("redirect") == "librarian")
+				System.out.println("YOOOOOOOO");
 			break;
 		case "/deleteBranch":
 			deleteBranch(request);
@@ -175,10 +182,55 @@ public class AdminServlet extends HttpServlet {
 			deleteBorrower(request);
 			forwardPath = "/borrowers.jsp";
 			break;
+		case "/editDueDate":
+			editDueDate(request);
+			forwardPath = "/bookloans.jsp";
+			break;
+		case "/returnBookLoan":
+			returnBookLoan(request);
+			forwardPath = "/bookloans.jsp";
+			break;
 		}
 
 		RequestDispatcher rd = request.getRequestDispatcher(forwardPath);
 		rd.forward(request, response);
+	}
+
+	private void returnBookLoan(HttpServletRequest request) {
+		BookLoan bl = new BookLoan();
+		bl.setBookId(Integer.valueOf(request.getParameter("bookId")));
+		bl.setBranchId(Integer.valueOf(request.getParameter("branchId")));
+		bl.setCardNo(Integer.valueOf(request.getParameter("cardNo")));
+		Calendar calendar = Calendar.getInstance();
+		bl.setDateIn(calendar.getTime());
+		
+		AdminService service = new AdminService();
+		
+		try {
+			service.returnBookLoan(bl);
+			request.setAttribute("message", "Book Returned");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Book Return Failed");
+			e.printStackTrace();
+		}
+	}
+
+	private void editDueDate(HttpServletRequest request) {
+		BookLoan bl = new BookLoan();
+		bl.setBookId(Integer.valueOf(request.getParameter("bookId")));
+		bl.setBranchId(Integer.valueOf(request.getParameter("branchId")));
+		bl.setCardNo(Integer.valueOf(request.getParameter("cardNo")));
+		bl.setDueDate(Date.valueOf(request.getParameter("newDueDate")));
+		
+		AdminService service = new AdminService();
+
+		try {
+			service.updateDueDate(bl);
+			request.setAttribute("message", "Due Date Changed");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Change Due Date Failed");
+			e.printStackTrace();
+		}
 	}
 
 	private void addAuthor(HttpServletRequest request) {
@@ -817,7 +869,7 @@ public class AdminServlet extends HttpServlet {
 				strBuf.append("<td>");
 				strBuf.append(bo.getAddress());
 				strBuf.append("</td>");
-				
+
 				strBuf.append("<td>");
 				strBuf.append(bo.getPhone());
 				strBuf.append("</td>");
