@@ -22,7 +22,8 @@ import com.gcit.lms.service.AdminService;
  * Servlet implementation class AdminServlet
  */
 @WebServlet({ "/addAuthor", "/editAuthor", "/deleteAuthor", "/pageAuthors", "/searchAuthors", "/addBook", "/editBook",
-		"/deleteBook", "/pageBooks", "/searchBooks" })
+		"/deleteBook", "/pageBooks", "/searchBooks", "/addPublisher", "/editPublisher", "/deletePublisher",
+		"/pagePublishers", "/searchPublishers" })
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -45,19 +46,34 @@ public class AdminServlet extends HttpServlet {
 
 		String forwardPath = "/welcome.jsp";
 		Boolean isAjax = Boolean.FALSE;
+		String data = null;
 		switch (reqUrl) {
 		case "/pageAuthors":
 			pageAuthors(request);
 			forwardPath = "/authors.jsp";
 			break;
 		case "/searchAuthors":
-			String data = searchAuthors(request);
+			data = searchAuthors(request);
 			response.getWriter().write(data);
 			isAjax = Boolean.TRUE;
 			break;
 		case "/pageBooks":
 			pageBooks(request);
 			forwardPath = "/books.jsp";
+			break;
+		case "/searchBooks":
+			data = searchBooks(request);
+			response.getWriter().write(data);
+			isAjax = Boolean.TRUE;
+			break;
+		case "/pagePublishers":
+			pagePublishers(request);
+			forwardPath = "/publishers.jsp";
+			break;
+		case "/searchPublishers":
+			data = searchPublishers(request);
+			response.getWriter().write(data);
+			isAjax = Boolean.TRUE;
 			break;
 		}
 
@@ -101,6 +117,18 @@ public class AdminServlet extends HttpServlet {
 		case "/deleteBook":
 			deleteBook(request);
 			forwardPath = "/books.jsp";
+			break;
+		case "/addPublisher":
+			addPublisher(request);
+			forwardPath = "/publishers.jsp";
+			break;
+		case "/editPublisher":
+			editPublisher(request);
+			forwardPath = "/publishers.jsp";
+			break;
+		case "/deletePublisher":
+			deletePublisher(request);
+			forwardPath = "/publishers.jsp";
 			break;
 		}
 
@@ -229,6 +257,51 @@ public class AdminServlet extends HttpServlet {
 
 	}
 
+	private void addPublisher(HttpServletRequest request) {
+		Publisher pb = new Publisher();
+
+		pb.setPubName(request.getParameter("publisherName"));
+		pb.setPubAddr(request.getParameter("publisherAddress"));
+		pb.setPubPhone(request.getParameter("publisherPhone"));
+
+		AdminService service = new AdminService();
+		try {
+			service.addPublisher(pb);
+			request.setAttribute("message", "Add Success");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Add Failed");
+			e.printStackTrace();
+		}
+	}
+
+	private void editPublisher(HttpServletRequest request) {
+		Publisher pb = new Publisher();
+		pb.setPubId(Integer.valueOf(request.getParameter("publisherId")));
+		pb.setPubName(request.getParameter("publisherName"));
+		pb.setPubAddr(request.getParameter("publisherAddress"));
+		pb.setPubPhone(request.getParameter("publisherPhone"));
+
+		AdminService service = new AdminService();
+		try {
+			service.editPublisher(pb);
+			request.setAttribute("message", "Edit Success");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Edit Failed");
+			e.printStackTrace();
+		}
+	}
+
+	private void deletePublisher(HttpServletRequest request) {
+		AdminService service = new AdminService();
+		try {
+			service.deletePublisherById(Integer.parseInt(request.getParameter("publisherId")));
+			request.setAttribute("message", "Delete Success");
+		} catch (NumberFormatException | SQLException e) {
+			request.setAttribute("message", "Delete Failed");
+			e.printStackTrace();
+		}
+	}
+
 	private void pageAuthors(HttpServletRequest request) {
 		Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
 		AdminService service = new AdminService();
@@ -248,6 +321,19 @@ public class AdminServlet extends HttpServlet {
 
 		try {
 			request.setAttribute("books", service.getAllBooksOnPage(pageNo));
+			request.setAttribute("pageNo", pageNo);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void pagePublishers(HttpServletRequest request) {
+		Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
+		AdminService service = new AdminService();
+
+		try {
+			request.setAttribute("publishers", service.getAllPublishersOnPage(pageNo));
 			request.setAttribute("pageNo", pageNo);
 
 		} catch (SQLException e) {
@@ -278,11 +364,11 @@ public class AdminServlet extends HttpServlet {
 				strBuf.append("</td>");
 
 				strBuf.append(
-						"<td><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#editAuthorModal' href='editauthor.jsp?authorId="
+						"<td><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#editAuthorModal' href='modal/editauthor.jsp?authorId="
 								+ a.getAuthorId() + "' style='margin-right: 2%;'>Update</button>");
 
 				strBuf.append(
-						"<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#editAuthorModal' href='deleteauthor.jsp?authorId="
+						"<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#editAuthorModal' href='modal/deleteauthor.jsp?authorId="
 								+ a.getAuthorId() + "'>Delete</button></td>");
 
 				strBuf.append("</tr>");
@@ -308,9 +394,164 @@ public class AdminServlet extends HttpServlet {
 				strBuf.append("<li><a onclick='searchAuthorsPage(" + i + ")' id='pageNav'>" + i + "</a></li>");
 			}
 			strBuf.append("<li><a onclick='searchAuthorsPage(" + nextPageNo
-					+ ")' aria-label='Previous'> <span aria-hidden='true'>&raquo;</span></a></li>");
+					+ ")' aria-label='Next'> <span aria-hidden='true'>&raquo;</span></a></li>");
 
 			strBuf.append("</ul");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
+	}
+
+	private String searchBooks(HttpServletRequest request) {
+
+		String searchString = request.getParameter("searchString");
+		Integer pageNo = Integer.valueOf(request.getParameter("pageNo"));
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+
+		try {
+			List<Book> books = service.getBooksByName(pageNo, searchString);
+			strBuf.append("<thead><tr><th>#</th><th>Title</th><th>Author</th><th>Operation</th></tr></thead><tbody>");
+
+			// prepare searched books
+			for (Book bk : books) {
+				strBuf.append("<tr>");
+
+				strBuf.append("<td>");
+				strBuf.append(books.indexOf(bk) + 1);
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				strBuf.append(bk.getTitle());
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+
+				int commaFlag = 0;
+				for (Author au : bk.getAuthors()) {
+					if (commaFlag == 0)
+						strBuf.append(au.getAuthorName());
+					else
+						strBuf.append(", " + au.getAuthorName());
+					commaFlag = 1;
+				}
+
+				strBuf.append("</td>");
+
+				strBuf.append(
+						"<td><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#modalConnector' href='modal/editbook.jsp?bookId="
+								+ bk.getBookId() + "' style='margin-right: 2%;'>Update</button>");
+
+				strBuf.append(
+						"<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#modalConnector' href='modal/deletebook.jsp?bookId="
+								+ bk.getBookId() + "'>Delete</button></td>");
+
+				strBuf.append("</tr>");
+			}
+			strBuf.append("</tbody>");
+
+			// special separator
+			strBuf.append("\n");
+
+			// add new pagination for search result
+			strBuf.append("<ul class='pagination' id='paginationList'>");
+
+			Integer previousPageNo = Integer.valueOf(request.getParameter("pageNo")) - 1;
+			Integer nextPageNo = Integer.valueOf(request.getParameter("pageNo")) + 1;
+
+			strBuf.append("<li><a onclick='searchBooksPage(" + previousPageNo
+					+ ")' aria-label='Previous'> <span aria-hidden='true'>&laquo;</span></a></li>");
+
+			books = service.getBooksByName(searchString);
+			int pageCount = books.size() / 10;
+			if (books.size() % 10 != 0)
+				pageCount += 1;
+			for (int i = 1; i <= pageCount; i++) {
+				strBuf.append("<li><a onclick='searchBooksPage(" + i + ")' id='pageNav'>" + i + "</a></li>");
+			}
+
+			strBuf.append("<li><a onclick='searchBooksPage(" + nextPageNo
+					+ ")' aria-label='Next'> <span aria-hidden='true'>&raquo;</span></a></li>");
+
+			strBuf.append("</ul"); // end pagination
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
+	}
+
+	private String searchPublishers(HttpServletRequest request) {
+
+		String searchString = request.getParameter("searchString");
+		Integer pageNo = Integer.valueOf(request.getParameter("pageNo"));
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+
+		try {
+			List<Publisher> pubs = service.getPublisherByName(pageNo, searchString);
+			strBuf.append(
+					"<thead><tr><th>#</th><th>Publisher Name</th><th>Address</th><th>Phone</th></tr></thead><tbody>");
+
+			// prepare searched books
+			for (Publisher pb : pubs) {
+				strBuf.append("<tr>");
+
+				strBuf.append("<td>");
+				strBuf.append(pubs.indexOf(pb) + 1);
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				strBuf.append(pb.getPubName());
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				strBuf.append(pb.getPubAddr());
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				strBuf.append(pb.getPubPhone());
+				strBuf.append("</td>");
+
+				strBuf.append(
+						"<td><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#modalConnector' href='modal/editpublisher.jsp?publisherId="
+								+ pb.getPubId() + "' style='margin-right: 2%;'>Update</button>");
+
+				strBuf.append(
+						"<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#modalConnector' href='modal/deletepublisher.jsp?publisherId="
+								+ pb.getPubId() + "'>Delete</button></td>");
+
+				strBuf.append("</tr>");
+			}
+			strBuf.append("</tbody>");
+
+			// special separator
+			strBuf.append("\n");
+
+			// add new pagination for search result
+			strBuf.append("<ul class='pagination' id='paginationList'>");
+
+			Integer previousPageNo = Integer.valueOf(request.getParameter("pageNo")) - 1;
+			Integer nextPageNo = Integer.valueOf(request.getParameter("pageNo")) + 1;
+
+			strBuf.append("<li><a onclick='searchItemsPage(" + previousPageNo
+					+ ")' aria-label='Previous'> <span aria-hidden='true'>&laquo;</span></a></li>");
+
+			pubs = service.getPublisherByName(searchString);
+			System.out.println("pubs size = " + pubs.size());
+			int pageCount = pubs.size() / 10;
+			if (pubs.size() % 10 != 0)
+				pageCount += 1;
+			for (int i = 1; i <= pageCount; i++) {
+				strBuf.append("<li><a onclick='searchItemsPage(" + i + ")' id='pageNav'>" + i + "</a></li>");
+			}
+
+			strBuf.append("<li><a onclick='searchItemsPage(" + nextPageNo
+					+ ")' aria-label='Next'> <span aria-hidden='true'>&raquo;</span></a></li>");
+
+			strBuf.append("</ul"); // end pagination
 
 		} catch (SQLException e) {
 			e.printStackTrace();

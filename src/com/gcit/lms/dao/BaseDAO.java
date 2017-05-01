@@ -74,7 +74,7 @@ public abstract class BaseDAO {
 			index = (getPageNo() - 1) * 10;
 		}
 		query = query + " LIMIT " + index + ", " + pageSize;
-
+		
 		PreparedStatement pstmt = conn.prepareStatement(query);
 		if (vals != null) {
 			int count = 1;

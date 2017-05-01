@@ -6,10 +6,12 @@ import java.util.List;
 
 import com.gcit.lms.dao.AuthorDAO;
 import com.gcit.lms.dao.BookDAO;
+import com.gcit.lms.dao.BranchDAO;
 import com.gcit.lms.dao.GenreDAO;
 import com.gcit.lms.dao.PublisherDAO;
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.Branch;
 import com.gcit.lms.entity.Genre;
 import com.gcit.lms.entity.Publisher;
 
@@ -164,6 +166,22 @@ public class AdminService {
 		}
 		return null;
 	}
+	
+	public List<Branch> getAllBranchesOnPage(Integer pageNo) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brDAO = new BranchDAO(conn);
+			return brDAO.readAllBranches(pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * 
@@ -223,28 +241,12 @@ public class AdminService {
 
 	}
 
-	public Integer getAuthorsCount() throws SQLException {
+	public List<Publisher> getAllPublishersOnPage(Integer pageNo) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = ConnectionUtil.getConnection();
-			AuthorDAO aDAO = new AuthorDAO(conn);
-			return aDAO.getAuthorsCount();
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) {
-				conn.close();
-			}
-		}
-		return null;
-	}
-
-	public Integer getBooksCount() throws SQLException {
-		Connection conn = null;
-		try {
-			conn = ConnectionUtil.getConnection();
-			BookDAO bkDAO = new BookDAO(conn);
-			return bkDAO.getBooksCount();
+			PublisherDAO pbDAO = new PublisherDAO(conn);
+			return pbDAO.readAllPublishers(pageNo);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -277,6 +279,22 @@ public class AdminService {
 			conn = ConnectionUtil.getConnection();
 			BookDAO bkDAO = new BookDAO(conn);
 			return bkDAO.readBookByID(bookId);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
+	public Publisher getPublisherByPk(Integer pubId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pbDAO = new PublisherDAO(conn);
+			return pbDAO.readPublisherByID(pubId);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -370,4 +388,151 @@ public class AdminService {
 		return null;
 	}
 
+	public List<Book> getBooksByName(Integer pageNo, String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bkDAO = new BookDAO(conn);
+			return bkDAO.readAllBooksByName(pageNo, searchString);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
+	public List<Book> getBooksByName(String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bkDAO = new BookDAO(conn);
+			return bkDAO.readAllBooksByName(searchString);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
+	public Integer getCount(String category) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+
+			switch (category) {
+			case "publisher":
+				PublisherDAO pbDAO = new PublisherDAO(conn);
+				return pbDAO.getPublishersCount();
+			case "book":
+				BookDAO bkDAO = new BookDAO(conn);
+				return bkDAO.getBooksCount();
+			case "author":
+				AuthorDAO auDAO = new AuthorDAO(conn);
+				return auDAO.getAuthorsCount();
+			case "branch":
+				BranchDAO brDAO = new BranchDAO(conn);
+				return brDAO.getBranchesCount();
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		System.out.println("AdminService.getCount(): invalid input");
+		return null;
+	}
+
+	public void editPublisher(Publisher pb) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pbDAO = new PublisherDAO(conn);
+			pbDAO.updatePublisher(pb);
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	public void addPublisher(Publisher pb) throws SQLException {
+
+		Connection conn = null;
+
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pbDAO = new PublisherDAO(conn);
+			pbDAO.addPublisher(pb);
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	
+	public void deletePublisherById(int pubId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pbDAO = new PublisherDAO(conn);
+			pbDAO.deletePublisherById(pubId);
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	public List<Publisher> getPublisherByName(Integer pageNo, String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pbDAO = new PublisherDAO(conn);
+			return pbDAO.readAllPublisherByName(pageNo, searchString);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
+	public List<Publisher> getPublisherByName(String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pbDAO = new PublisherDAO(conn);
+			return pbDAO.readAllPublisherByName( searchString);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
 }

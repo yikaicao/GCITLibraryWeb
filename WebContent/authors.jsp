@@ -15,7 +15,7 @@
 	AdminService service = new AdminService();
 
 	Integer numOfPages = 0;
-	Integer authorsCount = service.getAuthorsCount();
+	Integer authorsCount = service.getCount("author");
 	if (authorsCount % 10 > 0)
 		numOfPages = authorsCount / 10 + 1;
 	else
@@ -66,7 +66,6 @@
 			$('#paginationList').html($.trim(array_data[1]));
 		})
 	};
-	
 </script>
 
 <div class="container-fluid">
@@ -79,9 +78,9 @@
 				<li class="active"><a href="authors.jsp">All Authors <span
 						class="sr-only">(current)</span></a></li>
 				<li><a href="books.jsp">All Books</a></li>
-				<li><a href="">All Publishers</a></li>
-				<li><a href="">All Branches</a></li>
-				<li><a href="">All Branches</a></li>
+				<li><a href="publishers.jsp">All Publishers</a></li>
+				<li><a href="branches.jsp">All Branches</a></li>
+				<li><a href="borrowers.jsp">All Borrowers</a></li>
 			</ul>
 			<ul class="nav nav-sidebar">
 				<li><a href="">Override Due Date</a></li>
@@ -91,7 +90,7 @@
 
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 			<h5>${message}</h5>
-		
+
 			<h2 class="sub-header">Author List</h2>
 
 			<!-- Search -->
@@ -143,11 +142,11 @@
 
 							<td><button type="button" class="btn btn-primary"
 									data-toggle="modal" data-target="#modalConnector"
-									href="editauthor.jsp?authorId=<%=a.getAuthorId()%>"
+									href="modal/editauthor.jsp?authorId=<%=a.getAuthorId()%>"
 									style="margin-right: 2%;">Update</button>
 								<button type="button" class="btn btn-danger" data-toggle="modal"
 									data-target="#modalConnector"
-									href="deleteauthor.jsp?authorId=<%=a.getAuthorId()%>">Delete</button>
+									href="modal/deleteauthor.jsp?authorId=<%=a.getAuthorId()%>">Delete</button>
 							</td>
 
 						</tr>
@@ -198,7 +197,7 @@
 			<!-- Add Button -->
 			<button type="button" class="btn btn-success"
 				style="display: inline; float: left;" data-toggle="modal"
-				data-target="#modalConnector" href="addauthor.jsp?">Add</button>
+				data-target="#modalConnector" href="modal/addauthor.jsp?">Add</button>
 			<!-- /.Add Button -->
 
 		</div>

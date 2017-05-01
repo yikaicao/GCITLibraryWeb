@@ -132,4 +132,18 @@ public class BookDAO extends BaseDAO {
 		save("delete from tbl_book where bookId = ?", new Object[] { Integer.valueOf(bookId) });
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Book> readAllBooksByName(Integer pageNo, String searchString) throws SQLException {
+		setPageNo(pageNo);
+		searchString = "%" + searchString + "%";
+		return (List<Book>) read("select * from tbl_book where title like ?", new Object[] { searchString });
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<Book> readAllBooksByName(String searchString) throws SQLException {
+		searchString = "%" + searchString + "%";
+		return (List<Book>) readFirstLevel("select * from tbl_book where title like ?", new Object[] { searchString });
+	}
+
 }

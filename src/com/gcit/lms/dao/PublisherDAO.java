@@ -49,6 +49,53 @@ public class PublisherDAO extends BaseDAO {
 	@SuppressWarnings("unchecked")
 	public List<Publisher> readAllPublishers() throws SQLException {
 		return (List<Publisher>) read("select * from tbl_publisher", null);
+	}
 
+	public Integer getPublishersCount() throws ClassNotFoundException, SQLException {
+		return readCount("select count(*) as COUNT from tbl_publisher", null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Publisher> readAllPublishers(Integer pageNo) throws SQLException {
+		setPageNo(pageNo);
+		return (List<Publisher>) read("select * from tbl_publisher", null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Publisher readPublisherByID(Integer pubId) throws SQLException {
+		List<Publisher> pubs = (List<Publisher>) read("select * from tbl_publisher where publisherId = ?",
+				new Object[] { pubId });
+		if (pubs != null && !pubs.isEmpty())
+			return pubs.get(0);
+		return null;
+	}
+
+	public void updatePublisher(Publisher pb) throws ClassNotFoundException, SQLException {
+		save("update tbl_publisher set publisherName = ?, publisherAddress = ?, publisherPhone = ? where publisherId = ?",
+				new Object[] { pb.getPubName(), pb.getPubAddr(), pb.getPubPhone(), pb.getPubId() });
+	}
+
+	public void addPublisher(Publisher pb) throws ClassNotFoundException, SQLException {
+		save("insert into tbl_publisher (publisherName, publisherAddress, publisherPhone) values (?, ?, ?)",
+				new Object[] { pb.getPubName(), pb.getPubAddr(), pb.getPubPhone() });
+	}
+
+	public void deletePublisherById(int pubId) throws ClassNotFoundException, SQLException {
+		save("delete from tbl_publisher where publisherId = ?", new Object[] { Integer.valueOf(pubId) });
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Publisher> readAllPublisherByName(Integer pageNo, String searchString) throws SQLException {
+		setPageNo(pageNo);
+		searchString = "%" + searchString + "%";
+		return (List<Publisher>) read("select * from tbl_publisher where publisherName like ?",
+				new Object[] { searchString });
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Publisher> readAllPublisherByName(String searchString) throws SQLException {
+		searchString = "%" + searchString + "%";
+		return (List<Publisher>) readFirstLevel("select * from tbl_publisher where publisherName like ?",
+				new Object[] { searchString });
 	}
 }

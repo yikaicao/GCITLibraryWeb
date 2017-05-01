@@ -20,9 +20,9 @@
 					<ul class="nav nav-sidebar">
 						<li><a href="authors.jsp">All Authors</a></li>
 						<li><a href="books.jsp">All Books</a></li>
-						<li><a href="">All Publishers</a></li>
-						<li><a href="">All Branches</a></li>
-						<li><a href="">All Branches</a></li>
+						<li><a href="publishers.jsp">All Publishers</a></li>
+						<li><a href="branches.jsp">All Branches</a></li>
+						<li><a href="borrowers.jsp">All Borrowers</a></li>
 					</ul>
 					<ul class="nav nav-sidebar">
 						<li><a href="">Override Due Date</a></li>

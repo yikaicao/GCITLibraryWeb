@@ -62,4 +62,14 @@ public class BranchDAO extends BaseDAO {
 		return branches;
 	}
 
+	public Integer getBranchesCount() throws ClassNotFoundException, SQLException {
+		return readCount("select count(*) as COUNT from tbl_library_branch", null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Branch> readAllBranches(Integer pageNo) throws SQLException {
+		setPageNo(pageNo);
+		return (List<Branch>) read("select * from tbl_library_branch", null);
+	}
+
 }

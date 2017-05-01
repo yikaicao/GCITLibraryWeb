@@ -24,7 +24,7 @@ public class AuthorDAO extends BaseDAO {
 	}
 
 	public void deleteAuthorById(int authorId) throws ClassNotFoundException, SQLException {
-		save("delete from tbl_author where authorid = ?", new Object[] { Integer.valueOf(authorId) });
+		save("delete from tbl_author where authorId = ?", new Object[] { Integer.valueOf(authorId) });
 	}
 
 	public Integer getAuthorsCount() throws ClassNotFoundException, SQLException {
