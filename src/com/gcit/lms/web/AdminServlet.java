@@ -31,7 +31,8 @@ import com.gcit.lms.service.AdminService;
 		"/deleteBook", "/pageBooks", "/searchBooks", "/addPublisher", "/editPublisher", "/deletePublisher",
 		"/pagePublishers", "/searchPublishers", "/addBranch", "/editBranch", "/deleteBranch", "/pageBranches",
 		"/searchBranches", "/addBorrower", "/editBorrower", "/deleteBorrower", "/pageBorrowers", "/searchBorrowers",
-		"/editDueDate", "/returnBookLoan", "/updateBookCopies", "/validateUser", "/login_borrower", "/checkoutBook" })
+		"/editDueDate", "/returnBookLoan", "/updateBookCopies", "/validateUser", "/login_borrower", "/checkoutBook",
+		"/searchBookLoans" })
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -106,6 +107,11 @@ public class AdminServlet extends HttpServlet {
 			response.getWriter().write(data);
 			isAjax = Boolean.TRUE;
 			break;
+		case "/searchBookLoans":
+			data = searchBookLoan(request);
+			response.getWriter().write(data);
+			isAjax = Boolean.TRUE;
+			break;
 		}
 
 		if (!isAjax) {
@@ -113,18 +119,6 @@ public class AdminServlet extends HttpServlet {
 			rd.forward(request, response);
 		} else {
 		}
-	}
-
-	private String validateBorrower(HttpServletRequest request) {
-		String result = "failed";
-		AdminService service = new AdminService();
-		try {
-			if (service.validateBorrower(Integer.valueOf(request.getParameter("username"))))
-				result = "succeed";
-		} catch (NumberFormatException | SQLException e) {
-			e.printStackTrace();
-		}
-		return result;
 	}
 
 	/**
@@ -230,6 +224,18 @@ public class AdminServlet extends HttpServlet {
 		rd.forward(request, response);
 	}
 
+	private String validateBorrower(HttpServletRequest request) {
+		String result = "failed";
+		AdminService service = new AdminService();
+		try {
+			if (service.validateBorrower(Integer.valueOf(request.getParameter("username"))))
+				result = "succeed";
+		} catch (NumberFormatException | SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 	private void checkoutBook(HttpServletRequest request) {
 		AdminService service = new AdminService();
 		Integer cardNo = Integer.valueOf(request.getParameter("cardNo"));
@@ -240,8 +246,8 @@ public class AdminServlet extends HttpServlet {
 			request.setAttribute("message", "Book Checked Out");
 		} catch (SQLException e) {
 			request.setAttribute("message", "Book Check Out Failed");
-			//TODO handle exception
-			//e.printStackTrace();
+			// TODO handle exception
+			// e.printStackTrace();
 		}
 	}
 
@@ -979,4 +985,76 @@ public class AdminServlet extends HttpServlet {
 		}
 		return strBuf.toString();
 	}
+
+	private String searchBookLoan(HttpServletRequest request) {
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+		try {
+			List<BookLoan> blList = service.getBookLoans(request.getParameter("searchBorrower"),
+					request.getParameter("searchBranch"));
+			strBuf.append(
+					"<thead><tr><th>#</th><th>Book</th><th>Branch</th><th>Borrower</th><th>Date Out</th><th>Due Date</th><th>Return</th></tr></thead><tbody>");
+
+			// prepare searched books
+			for (BookLoan bl : blList) {
+				strBuf.append("<tr>");
+
+				strBuf.append("<td>");
+				strBuf.append(blList.indexOf(bl) + 1);
+				strBuf.append("</td>");
+
+				Book bk = service.getBookByPk(bl.getBookId());
+
+				strBuf.append("<td>");
+				strBuf.append(bk.getTitle());
+				strBuf.append("</td>");
+
+				Branch br = service.getBranchByPk(bl.getBranchId());
+
+				strBuf.append("<td>");
+				strBuf.append(br.getBranchName());
+				strBuf.append("</td>");
+
+				Borrower bo = service.getBorrowerByPk(bl.getCardNo());
+
+				strBuf.append("<td>");
+				strBuf.append(bo.getName());
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				strBuf.append(bl.getDateOut().toString());
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				strBuf.append(bl.getDueDate().toString());
+				strBuf.append("</td>");
+
+				strBuf.append("<td>");
+				if (bl.getDateIn() != null)
+					strBuf.append(bl.getDateIn().toString());
+				else {
+					strBuf.append(
+							"<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#modalConnector' href='modal/changeduedate.jsp?bookId="
+									+ bl.getBookId() + "&branchId=" + bl.getBranchId() + "&cardNo=" + bl.getCardNo()
+									+ "'> Update</button>  ");
+					strBuf.append(
+							"<button type='button' class='btn btn-warning' data-toggle='modal' data-target='#modalConnector' href='modal/returnbookloan.jsp?bookId="
+									+ bl.getBookId() + "&branchId=" + bl.getBranchId() + "&cardNo=" + bl.getCardNo()
+									+ "'> Return</button>");
+				}
+				strBuf.append("</td>");
+
+				strBuf.append("</tr>");
+			}
+			strBuf.append("</tbody>");
+
+			// special separator
+			strBuf.append("\n");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
+	}
+
 }

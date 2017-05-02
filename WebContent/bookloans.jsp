@@ -42,9 +42,10 @@
 <script>
 	function searchItems() {
 		$.ajax({
-			url : "searchBorrowers",
+			url : "searchBookLoans",
 			data : {
-				searchString : $('#searchString').val(),
+				searchBorrower : $('#searchBorrower').val(),
+				searchBranch : $('#searchBranch').val(),
 				pageNo : 1
 			}
 		}).done(function(data) {
@@ -83,8 +84,9 @@
 				<li><a href="borrowers.jsp">All Borrowers</a></li>
 			</ul>
 			<ul class="nav nav-sidebar">
-				<li class="active"><a href="bookloans.jsp">Override Due Date<span
-						class="sr-only">(current)</span></a></li>
+				<li class="active"><a href="bookloans.jsp">Override Due
+						Date<span class="sr-only">(current)</span>
+				</a></li>
 			</ul>
 		</div>
 
@@ -97,11 +99,15 @@
 			<!-- Search -->
 			<div class="row">
 				<div class="col-lg-6">
-					<div class="input-group" style="display: inline;">
+					<div class="">
 						<input type="text" class="form-control"
-							placeholder="Search for Borrower" style="border-radius: 5px;"
-							name="searchString" id="searchString" oninput="searchItems()">
-						<span class="input-group-btn"> </span>
+							placeholder="Search for Borrower"
+							style="border-radius: 5px; float: left;" name="searchString"
+							id="searchBorrower" oninput="searchItems()"> <input
+							type="text" class="form-control" placeholder="Search for Branch"
+							style="border-radius: 5px; float: left;" name="searchString"
+							id="searchBranch" oninput="searchItems()">
+
 					</div>
 					<!-- /input-group -->
 
@@ -209,28 +215,6 @@
 			</div>
 			<!-- /.Modal Connector -->
 
-
-
-			<!-- Pagination -->
-			<nav aria-label="Page navigation">
-				<ul class="pagination" id="paginationList">
-					<li><a href="pageBorrowers?pageNo=<%=previousPageNo%>"
-						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-					</a></li>
-
-					<%
-						for (int i = 1; i <= numOfPages; i++) {
-					%>
-					<li><a href="pageBorrowers?pageNo=<%=i%>"><%=i%></a></li>
-					<%
-						}
-					%>
-					<li><a href="pageBorrowers?pageNo=<%=nextPageNo%>"
-						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-					</a></li>
-				</ul>
-			</nav>
-			<!-- End Pagination -->
 
 
 		</div>

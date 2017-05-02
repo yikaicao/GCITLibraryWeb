@@ -90,7 +90,18 @@ public class BookLoanDAO extends BaseDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<BookLoan> getAllBookLoans(Integer branchId, Integer cardNo) throws SQLException {
-		return (List<BookLoan>) read("select * from tbl_book_loans where branchId = ? and cardNo = ? and dateIn is NULL",
+		return (List<BookLoan>) read(
+				"select * from tbl_book_loans where branchId = ? and cardNo = ? and dateIn is NULL",
 				new Object[] { branchId, cardNo });
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<BookLoan> getBookLoans(String borrower, String branch) throws SQLException {
+		borrower = "%" + borrower + "%";
+		branch = "%" + branch + "%";
+		return (List<BookLoan>) read(
+				"select * from tbl_book_loans where cardNo in" + "(select cardNo from tbl_borrower where name like ?)"
+						+ "and branchId in (select branchId from tbl_library_branch where branchName like ?)",
+				new Object[] { borrower, branch });
 	}
 }

@@ -910,4 +910,20 @@ public class AdminService {
 		}
 		return null;
 	}
+
+	public List<BookLoan> getBookLoans(String borrower, String branch) throws SQLException {
+		Connection conn = null;
+
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookLoanDAO blDAO = new BookLoanDAO(conn);
+			return blDAO.getBookLoans(borrower, branch);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+		return null;
+	}
 }
