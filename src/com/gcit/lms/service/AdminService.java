@@ -800,6 +800,8 @@ public class AdminService {
 			conn = ConnectionUtil.getConnection();
 			BookLoanDAO blDAO = new BookLoanDAO(conn);
 			blDAO.returnBookLoan(bl);
+			BranchDAO brDAO = new BranchDAO(conn);
+			brDAO.incrementCopies(bl.getBookId(), bl.getBranchId());
 			conn.commit();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -882,7 +884,7 @@ public class AdminService {
 			conn = ConnectionUtil.getConnection();
 			BranchDAO brDAO = new BranchDAO(conn);
 			BookLoanDAO blDAO = new BookLoanDAO(conn);
-			brDAO.decCopies(bookId, branchId);
+			brDAO.decrementCopies(bookId, branchId);
 			blDAO.addBookLoan(bookId, branchId, cardNo);
 			conn.commit();
 		} catch (ClassNotFoundException e) {
@@ -891,5 +893,21 @@ public class AdminService {
 			if (conn != null)
 				conn.close();
 		}
+	}
+
+	public List<BookLoan> getAllBookLoans(Integer branchId, Integer cardNo) throws SQLException {
+		Connection conn = null;
+
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookLoanDAO blDAO = new BookLoanDAO(conn);
+			return blDAO.getAllBookLoans(branchId, cardNo);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+		return null;
 	}
 }

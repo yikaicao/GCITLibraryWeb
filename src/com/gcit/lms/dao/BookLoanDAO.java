@@ -87,4 +87,10 @@ public class BookLoanDAO extends BaseDAO {
 		save("insert into tbl_book_loans (bookId, branchId, cardNo, dateOut, dueDate) values(?, ?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 7 DAY))",
 				new Object[] { bookId, branchId, cardNo });
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<BookLoan> getAllBookLoans(Integer branchId, Integer cardNo) throws SQLException {
+		return (List<BookLoan>) read("select * from tbl_book_loans where branchId = ? and cardNo = ? and dateIn is NULL",
+				new Object[] { branchId, cardNo });
+	}
 }

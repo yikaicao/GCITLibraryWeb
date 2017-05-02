@@ -206,6 +206,10 @@ public class AdminServlet extends HttpServlet {
 		case "/returnBookLoan":
 			returnBookLoan(request);
 			forwardPath = "/bookloans.jsp";
+			if (request.getParameter("redirect").equals("borrower")) {
+				request.setAttribute("cardNo", request.getParameter("cardNo"));
+				forwardPath = "/borrower.jsp";
+			}
 			break;
 		case "/updateBookCopies":
 			updateBookCopies(request);
@@ -236,6 +240,7 @@ public class AdminServlet extends HttpServlet {
 			request.setAttribute("message", "Book Checked Out");
 		} catch (SQLException e) {
 			request.setAttribute("message", "Book Check Out Failed");
+			//TODO handle exception
 			//e.printStackTrace();
 		}
 	}
