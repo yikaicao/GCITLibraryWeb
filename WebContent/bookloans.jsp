@@ -128,7 +128,7 @@
 							<th>Borrower</th>
 							<th>Date Out</th>
 							<th>Due Date</th>
-							<th>Return</th>
+							<th>Operation</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -186,12 +186,9 @@
 									data-toggle="modal" data-target="#modalConnector"
 									href="modal/changeduedate.jsp?bookId=<%=bl.getBookId()%>&branchId=<%=bl.getBranchId()%>&cardNo=<%=bl.getCardNo()%>">
 									Update</button>
-								<button type="button" class="btn btn-warning"
-									data-toggle="modal" data-target="#modalConnector"
-									href="modal/returnbookloan.jsp?bookId=<%=bl.getBookId()%>&branchId=<%=bl.getBranchId()%>&cardNo=<%=bl.getCardNo()%>">
-									Return</button> <%
- 	}
- %>
+								<%
+									}
+								%>
 							</td>
 
 						</tr>

@@ -14,7 +14,7 @@
 			<input type="date" name="newDueDate">
 			<input type="hidden" name="bookId" value="<%=request.getParameter("bookId")%>">
 			<input type="hidden" name="branchId" value="<%=request.getParameter("branchId")%>">
-			<input type="hidden" name="cardNo" value="<%=request.getParameter("cardNo")%>">
+			<input type="hidden" name="cardNo" value="<%=request.getParameter("cardNo")%>"> 
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
