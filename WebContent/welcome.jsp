@@ -180,10 +180,6 @@
 		else
 			$('head > link').filter(':first').replaceWith(defaultCSS);
 	}
-	$(document).ready(function() {
-		var iframe_height = parseInt($('html').height());
-		window.parent.postMessage(iframe_height, 'http://bootsnipp.com');
-	});
 </script>
 </head>
 
@@ -211,10 +207,11 @@
 						<div id="div-login-msg">
 							<div id="icon-login-msg"
 								class="glyphicon glyphicon-chevron-right"></div>
-							<span id="text-login-msg">Type your username and password.</span>
+							<span id="text-login-msg">Type your card number and
+								password.</span>
 						</div>
-						<input id="login_username" class="form-control" type="text"
-							placeholder="Username" required=""> <input
+						<input id="login_username" class="form-control" type="number"
+							placeholder="Card number" required=""> <input
 							id="login_password" class="form-control" type="password"
 							placeholder="Password" required="">
 						<div class="checkbox">
@@ -267,7 +264,8 @@
 								class="glyphicon glyphicon-chevron-right"></div>
 							<span id="text-register-msg">Register an account.</span>
 						</div>
-						<input id="register_username" class="form-control" type="text"
+						<input id="register_username" name="register_username"
+							class="form-control" type="number"
 							placeholder="Username (type ERROR for error effect)" required="">
 						<input id="register_email" class="form-control" type="text"
 							placeholder="E-Mail" required=""> <input
@@ -317,36 +315,53 @@
 		var $msgAnimateTime = 150;
 		var $msgShowTime = 2000;
 
-		$("form").submit(
-				function() {
+		$("form")
+				.submit(
+						function() {
 
-					var loginSucceed = false;
-					$.ajax({
-						url : "validateUser",
-						data : {
-							username : $('#register_username').val()
-						}
-					}).done(
-							function(data) {
-								msgChange($('#div-login-msg'),
-										$('#icon-login-msg'),
-										$('#text-login-msg'), "success",
-										"glyphicon-ok", "Login OK");
+							var loginSucceed = false;
+							var cardNo = $('#login_username').val();
+							$
+									.ajax(
+											{
+												url : "validateUser",
+												data : {
+													username : $(
+															'#login_username')
+															.val()
+												}
+											})
+									.done(
+											function(data) {
+												if (data
+														.localeCompare("succeed") == 0) {
+													msgChange(
+															$('#div-login-msg'),
+															$('#icon-login-msg'),
+															$('#text-login-msg'),
+															"success",
+															"glyphicon-ok",
+															"Login OK");
+													setTimeout(
+															function() {
+																var form =$('<form action="login_borrower" method="post"><input type="hidden" name="cardNo" value='+cardNo+'></form>');
+																$(document.body).append(form);
+																form.submit();
+															}, 1000);
+												} else {
+													msgChange(
+															$('#div-login-msg'),
+															$('#icon-login-msg'),
+															$('#text-login-msg'),
+															"error",
+															"glyphicon-remove",
+															"Login error");
+												}
 
-								msgChange($('#div-login-msg'),
-										$('#icon-login-msg'),
-										$('#text-login-msg'), "error",
-										"glyphicon-remove", "Login error");
-								
-								$.post( "borrower.jsp", {borrowerId: 1})
-								  .done(function( data ) {
-								    alert( "Data Loaded: " + data );
-								  });
-								
-							})
+											})
 
-					return false;
-				});
+							return false;
+						});
 
 		$('#login_register_btn').click(function() {
 			modalAnimate($formLogin, $formRegister)
@@ -400,5 +415,6 @@
 				$iconTag.removeClass($iconClass + " " + $divClass);
 			}, $msgShowTime);
 		}
+
 	});
 </script>

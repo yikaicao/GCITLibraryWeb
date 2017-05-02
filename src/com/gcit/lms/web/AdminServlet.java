@@ -31,7 +31,7 @@ import com.gcit.lms.service.AdminService;
 		"/deleteBook", "/pageBooks", "/searchBooks", "/addPublisher", "/editPublisher", "/deletePublisher",
 		"/pagePublishers", "/searchPublishers", "/addBranch", "/editBranch", "/deleteBranch", "/pageBranches",
 		"/searchBranches", "/addBorrower", "/editBorrower", "/deleteBorrower", "/pageBorrowers", "/searchBorrowers",
-		"/editDueDate", "/returnBookLoan", "/updateBookCopies", "/validateUser","/borrower" })
+		"/editDueDate", "/returnBookLoan", "/updateBookCopies", "/validateUser", "/login_borrower" })
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -116,9 +116,16 @@ public class AdminServlet extends HttpServlet {
 	}
 
 	private String validateBorrower(HttpServletRequest request) {
-		return "succeed";
+		String result = "failed";
+		AdminService service = new AdminService();
+		try {
+			if (service.validateBorrower(Integer.valueOf(request.getParameter("username"))))
+				result = "succeed";
+		} catch (NumberFormatException | SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
-	
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -203,6 +210,10 @@ public class AdminServlet extends HttpServlet {
 		case "/updateBookCopies":
 			updateBookCopies(request);
 			forwardPath = "/librarian.jsp";
+			break;
+		case "/login_borrower":
+			forwardPath = "/borrower.jsp";
+			request.setAttribute("cardNo", request.getParameter("cardNo"));
 			break;
 		}
 

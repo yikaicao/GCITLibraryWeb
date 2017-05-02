@@ -92,4 +92,13 @@ public class BorrowerDAO extends BaseDAO {
 		return readCount("select count(*) as COUNT from tbl_borrower", null);
 	}
 
+	@SuppressWarnings("unchecked")
+	public boolean validateCardNo(Integer cardNo) throws SQLException {
+		List<Borrower> borrowerList = (List<Borrower>) read("select * from tbl_borrower where cardNo = ?", new Object[] {cardNo});
+		if (borrowerList == null ||borrowerList.isEmpty()){
+			return false;
+		}
+		return true;
+	}
+
 }

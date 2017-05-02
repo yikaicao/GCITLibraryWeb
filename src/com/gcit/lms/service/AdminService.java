@@ -858,4 +858,20 @@ public class AdminService {
 			}
 		}
 	}
+
+	public boolean validateBorrower(Integer cardNo) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BorrowerDAO boDAO = new BorrowerDAO(conn);
+			return boDAO.validateCardNo(cardNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return false;
+	}
 }

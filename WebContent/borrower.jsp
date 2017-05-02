@@ -1,3 +1,4 @@
+<%@page import="com.gcit.lms.entity.Borrower"%>
 <%@page import="com.gcit.lms.entity.Branch"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
@@ -5,8 +6,9 @@
 <%@include file="header.html"%>
 
 <%
-
 	AdminService service = new AdminService();
+	Integer cardNo = Integer.valueOf((String) request.getAttribute("cardNo"));
+	Borrower bo = service.getBorrowerByPk(cardNo);
 
 	Integer numOfPages = 0;
 	Integer itemCount = service.getCount("branch");
@@ -17,8 +19,6 @@
 		branches = (List<Branch>) request.getAttribute("branches");
 	else
 		branches = service.getAllBranchesOnPage(1);
-
-
 %>
 
 <head>
@@ -36,9 +36,12 @@ button {
 
 	<!-- Jumbotron Header -->
 	<header class="jumbotron hero-spacer">
-		<h1>Welcome, Librarian!</h1>
-		<p>Here, you can customize your branch and add copies of book in
-			it.</p>
+		<h1>
+			Welcome, our valued customer
+			<%=bo.getName()%>!
+		</h1>
+		<p>Here, you can select your local branch and check out or return
+			books.</p>
 		<p>
 			<a class="btn btn-primary btn-large" href="#started">Get Started</a>
 		</p>
@@ -59,7 +62,7 @@ button {
 	<div class="row text-center" id="started">
 
 		<%
-			for (Branch br: branches) {
+			for (Branch br : branches) {
 		%>
 
 		<div class="col-md-3 col-sm-6 hero-feature">
@@ -69,19 +72,13 @@ button {
 					<p><%=br.getBranchAddress()%></p>
 					<p>
 
-
-						<button type="button" class="btn btn-primary info-btn" data-toggle="modal"
+						<button type="button" class="btn btn-primary" data-toggle="modal"
 							data-target="#modalConnector"
-							href="modal/viewbranch.jsp?branchId=<%=br.getBranchId()%>"
-							style="margin-right: 2%;">Books</button>
-						<button type="button" class="btn btn-info info-btn" data-toggle="modal"
+							href="modal/viewbranch_borrower.jsp?branchId=<%=br.getBranchId()%>&cardNo=<%=cardNo%>"
+							style="margin-right: 2%;">Check Out</button>
+						<button type="button" class="btn btn-success" data-toggle="modal"
 							data-target="#modalConnector"
-							href="modal/editbranch.jsp?branchId=<%=br.getBranchId()%>&redirect=librarian">Update
-							Branch</button>
-						<button type="button" class="btn btn-success info-btn" data-toggle="modal"
-							data-target="#modalConnector"
-							href="modal/updatebookcopies.jsp?branchId=<%=br.getBranchId()%>">Update
-							Copies</button>
+							href="modal/checkoutbook.jsp?branchId=<%=br.getBranchId()%>&cardNo=<%=cardNo%>">Return</button>
 					</p>
 				</div>
 			</div>
