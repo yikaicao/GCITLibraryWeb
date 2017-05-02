@@ -18,12 +18,19 @@
 	else
 		branches = service.getAllBranchesOnPage(1);
 
+
 %>
 
 <head>
 <link href="css/librarian.css" rel="stylesheet">
 <link href="css/dashboard.css" rel="stylesheet">
 </head>
+
+<style>
+button {
+	margin: 5px;
+}
+</style>
 
 <div class="container">
 
@@ -42,6 +49,7 @@
 	<!-- Title -->
 	<div class="row">
 		<div class="col-lg-12">
+			<h5>${message}</h5>
 			<h3>All Branches</h3>
 		</div>
 	</div>
@@ -60,11 +68,19 @@
 					<h3><%=br.getBranchName()%></h3>
 					<p><%=br.getBranchAddress()%></p>
 					<p>
+
 						<button type="button" class="btn btn-primary" data-toggle="modal"
 							data-target="#modalConnector"
-							href="modal/editbranch.jsp?branchId=<%=br.getBranchId()%>&redirect='librarian'"
-							style="margin-right: 2%;">Update</button>
-						<button type="submit" class="btn btn-success">Add</button>
+							href="modal/viewbranch.jsp?branchId=<%=br.getBranchId()%>"
+							style="margin-right: 2%;">Books</button>
+						<button type="button" class="btn btn-info" data-toggle="modal"
+							data-target="#modalConnector"
+							href="modal/editbranch.jsp?branchId=<%=br.getBranchId()%>&redirect=librarian">Update
+							Branch</button>
+						<button type="button" class="btn btn-success" data-toggle="modal"
+							data-target="#modalConnector"
+							href="modal/updatebookcopies.jsp?branchId=<%=br.getBranchId()%>">Update
+							Copies</button>
 					</p>
 				</div>
 			</div>

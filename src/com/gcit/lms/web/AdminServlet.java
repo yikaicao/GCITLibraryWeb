@@ -31,7 +31,7 @@ import com.gcit.lms.service.AdminService;
 		"/deleteBook", "/pageBooks", "/searchBooks", "/addPublisher", "/editPublisher", "/deletePublisher",
 		"/pagePublishers", "/searchPublishers", "/addBranch", "/editBranch", "/deleteBranch", "/pageBranches",
 		"/searchBranches", "/addBorrower", "/editBorrower", "/deleteBorrower", "/pageBorrowers", "/searchBorrowers",
-		"/editDueDate", "/returnBookLoan" })
+		"/editDueDate", "/returnBookLoan", "/updateBookCopies", "/validateUser","/borrower" })
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -101,6 +101,11 @@ public class AdminServlet extends HttpServlet {
 			response.getWriter().write(data);
 			isAjax = Boolean.TRUE;
 			break;
+		case "/validateUser":
+			data = validateBorrower(request);
+			response.getWriter().write(data);
+			isAjax = Boolean.TRUE;
+			break;
 		}
 
 		if (!isAjax) {
@@ -109,6 +114,11 @@ public class AdminServlet extends HttpServlet {
 		} else {
 		}
 	}
+
+	private String validateBorrower(HttpServletRequest request) {
+		return "succeed";
+	}
+	
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -163,8 +173,8 @@ public class AdminServlet extends HttpServlet {
 		case "/editBranch":
 			editBranch(request);
 			forwardPath = "/branches.jsp";
-			if (request.getParameter("redirect") == "librarian")
-				System.out.println("YOOOOOOOO");
+			if (request.getParameter("redirect").equals("librarian"))
+				forwardPath = "/librarian.jsp";
 			break;
 		case "/deleteBranch":
 			deleteBranch(request);
@@ -190,10 +200,28 @@ public class AdminServlet extends HttpServlet {
 			returnBookLoan(request);
 			forwardPath = "/bookloans.jsp";
 			break;
+		case "/updateBookCopies":
+			updateBookCopies(request);
+			forwardPath = "/librarian.jsp";
+			break;
 		}
 
 		RequestDispatcher rd = request.getRequestDispatcher(forwardPath);
 		rd.forward(request, response);
+	}
+
+	private void updateBookCopies(HttpServletRequest request) {
+		AdminService service = new AdminService();
+		Integer branchId = Integer.valueOf(request.getParameter("branchId"));
+		Integer bookId = Integer.valueOf(request.getParameterValues("bookId")[0]);
+		Integer quantity = Integer.valueOf(request.getParameter("quantity"));
+		try {
+			service.updateBookCopies(branchId, bookId, quantity);
+			request.setAttribute("message", "Copies Updated");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Copies Update Failed");
+			e.printStackTrace();
+		}
 	}
 
 	private void returnBookLoan(HttpServletRequest request) {
@@ -203,9 +231,9 @@ public class AdminServlet extends HttpServlet {
 		bl.setCardNo(Integer.valueOf(request.getParameter("cardNo")));
 		Calendar calendar = Calendar.getInstance();
 		bl.setDateIn(calendar.getTime());
-		
+
 		AdminService service = new AdminService();
-		
+
 		try {
 			service.returnBookLoan(bl);
 			request.setAttribute("message", "Book Returned");
@@ -221,7 +249,7 @@ public class AdminServlet extends HttpServlet {
 		bl.setBranchId(Integer.valueOf(request.getParameter("branchId")));
 		bl.setCardNo(Integer.valueOf(request.getParameter("cardNo")));
 		bl.setDueDate(Date.valueOf(request.getParameter("newDueDate")));
-		
+
 		AdminService service = new AdminService();
 
 		try {

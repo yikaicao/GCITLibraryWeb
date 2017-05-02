@@ -19,7 +19,7 @@ public class BookDAO extends BaseDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Book> readAllBooks() throws SQLException {
-		return (List<Book>) read("select * from tbl_book", null);
+		return (List<Book>) readFirstLevel("select * from tbl_book", null);
 	}
 
 	@SuppressWarnings("unchecked")

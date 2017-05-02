@@ -118,3 +118,8 @@ table {
 input {
 	border-radius: 5px;
 }
+
+.placeholder a: hover {
+	opacity: 0.7;
+	
+}

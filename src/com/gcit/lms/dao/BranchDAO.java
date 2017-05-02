@@ -104,4 +104,11 @@ public class BranchDAO extends BaseDAO {
 				new Object[] { searchString });
 	}
 
+	public void updateBookCopies(Integer branchId, Integer bookId, Integer quantity)
+			throws ClassNotFoundException, SQLException {
+		save("delete from tbl_book_copies where bookId = ? and branchId = ?", new Object[] { bookId, branchId });
+		save("insert into tbl_book_copies (bookId, branchId, noOfCopies) values (?, ?, ?)",
+				new Object[] { bookId, branchId, quantity });
+	}
+
 }

@@ -810,4 +810,52 @@ public class AdminService {
 			}
 		}
 	}
+
+	public List<Book> getAllBooksAtBranch(Integer branchId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bkDAO = new BookDAO(conn);
+			return bkDAO.getBooksAtBranch(branchId);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
+	public Integer getAllNumOfCopies(Integer bookId, Integer branchId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bkDAO = new BookDAO(conn);
+			return bkDAO.getNumOfCopiesAtBranch(branchId, bookId);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
+	public void updateBookCopies(Integer branchId, Integer bookId, Integer quantity) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brDAO = new BranchDAO(conn);
+			brDAO.updateBookCopies(branchId, bookId, quantity);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
 }

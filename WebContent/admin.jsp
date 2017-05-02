@@ -33,36 +33,26 @@
 
 					<div class="row placeholders">
 						<div class="col-xs-6 col-sm-3 placeholder">
-							<img
-								src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-								width="200" height="200" class="img-responsive"
-								alt="Generic placeholder thumbnail">
-							<h4>Label</h4>
-							<span class="text-muted">Something else</span>
+							<a href="authors.jsp"><img src="img/author.png" width="150" height="150">
+								<h4>Author</h4> <span class="text-muted">Add/Change/Delete</span></a>
 						</div>
 						<div class="col-xs-6 col-sm-3 placeholder">
-							<img
-								src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-								width="200" height="200" class="img-responsive"
-								alt="Generic placeholder thumbnail">
-							<h4>Label</h4>
-							<span class="text-muted">Something else</span>
+							<a href="books.jsp"><img src="img/book.png" width="150" height="150">
+							<h4>Book</h4>
+							<span class="text-muted">Add/Change/Delete</span></a>
 						</div>
 						<div class="col-xs-6 col-sm-3 placeholder">
-							<img
-								src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-								width="200" height="200" class="img-responsive"
-								alt="Generic placeholder thumbnail">
-							<h4>Label</h4>
-							<span class="text-muted">Something else</span>
+							<a href="publishers.jsp"><img src="img/publisher.png" width="150" height="150">
+								<h4>Publisher</h4> <span class="text-muted">Add/Change/Delete</span></a>
 						</div>
 						<div class="col-xs-6 col-sm-3 placeholder">
-							<img
-								src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-								width="200" height="200" class="img-responsive"
-								alt="Generic placeholder thumbnail">
-							<h4>Label</h4>
-							<span class="text-muted">Something else</span>
+							<a href="branches.jsp"><img src="img/library.png" width="150" height="150">
+								<h4>Branch</h4> <span class="text-muted">Add/Change/Delete</span></a>
+						</div>
+
+						<div class="col-xs-6 col-sm-3 placeholder">
+							<a href="borrowers.jsp"><img src="img/borrower.png" width="150" height="150">
+								<h4>Borrower</h4> <span class="text-muted">Add/Change/Delete</span></a>
 						</div>
 					</div>
 
