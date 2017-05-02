@@ -874,4 +874,22 @@ public class AdminService {
 		}
 		return false;
 	}
+
+	public void checkoutBook(Integer cardNo, Integer bookId, Integer branchId) throws SQLException {
+		Connection conn = null;
+
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brDAO = new BranchDAO(conn);
+			BookLoanDAO blDAO = new BookLoanDAO(conn);
+			brDAO.decCopies(bookId, branchId);
+			blDAO.addBookLoan(bookId, branchId, cardNo);
+			conn.commit();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+	}
 }

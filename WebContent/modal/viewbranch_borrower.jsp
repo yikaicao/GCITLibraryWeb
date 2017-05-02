@@ -58,14 +58,33 @@
 
 
 						<td>
-							<% 
-								out.println(service.getAllNumOfCopies(bk.getBookId(), Integer.valueOf(request.getParameter("branchId"))));
+							<%
+								Integer noOfCopies = service.getAllNumOfCopies(bk.getBookId(),
+											Integer.valueOf(request.getParameter("branchId")));
+									out.println(noOfCopies);
 							%>
 						</td>
 						<td>
-						
+							<form action="checkoutBook" method="post">
+								<input type="hidden" name="bookId" value="<%=bk.getBookId()%>">
+								<input type="hidden" name="branchId"
+									value="<%=Integer.valueOf(request.getParameter("branchId"))%>">
+								<input type="hidden" name="cardNo"
+									value="<%=request.getParameter("cardNo")%>">
+								<%
+									if (noOfCopies > 0) {
+								%>
+								<button type="submit" class="btn btn-warning"
+									data-toggle="modal">Check Out</button>
+								<%
+									}
+								%>
+
+							</form>
 						</td>
 					</tr>
+
+
 
 					<%
 						}
@@ -82,4 +101,17 @@
 		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	</div>
 
+
 </div>
+
+<!-- Modal Connector -->
+<div class="modal fade" tabindex="-1" role="dialog" id="modalConnector">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content" style="text-align: left;"></div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+<!-- /.Modal Connector -->
+
+

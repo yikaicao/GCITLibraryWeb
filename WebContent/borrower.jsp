@@ -78,7 +78,7 @@ button {
 							style="margin-right: 2%;">Check Out</button>
 						<button type="button" class="btn btn-success" data-toggle="modal"
 							data-target="#modalConnector"
-							href="modal/checkoutbook.jsp?branchId=<%=br.getBranchId()%>&cardNo=<%=cardNo%>">Return</button>
+							href="modal/returnbookloan.jsp?branchId=<%=br.getBranchId()%>&cardNo=<%=cardNo%>">Return</button>
 					</p>
 				</div>
 			</div>

@@ -67,6 +67,24 @@ public class BookLoanDAO extends BaseDAO {
 	public void returnBookLoan(BookLoan bl) throws ClassNotFoundException, SQLException {
 		save("update tbl_book_loans set dateIn = ? where bookId = ? and branchId = ? and cardNo = ?",
 				new Object[] { bl.getDateIn(), bl.getBookId(), bl.getBranchId(), bl.getCardNo() });
-		
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public void addBookLoan(Integer bookId, Integer branchId, Integer cardNo)
+			throws ClassNotFoundException, SQLException {
+
+		List<BookLoan> blList = (List<BookLoan>) read(
+				"select * from tbl_book_loans where bookId = ? and branchId = ? and cardNo = ?",
+				new Object[] { bookId, branchId, cardNo });
+		for (BookLoan bl : blList) {
+			if (bl.getDateIn() == null)
+				throw new SQLException();
+		}
+
+		save("delete from tbl_book_loans where bookId = ? and branchId = ? and cardNo = ?",
+				new Object[] { bookId, branchId, cardNo });
+		save("insert into tbl_book_loans (bookId, branchId, cardNo, dateOut, dueDate) values(?, ?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 7 DAY))",
+				new Object[] { bookId, branchId, cardNo });
 	}
 }

@@ -31,7 +31,7 @@ import com.gcit.lms.service.AdminService;
 		"/deleteBook", "/pageBooks", "/searchBooks", "/addPublisher", "/editPublisher", "/deletePublisher",
 		"/pagePublishers", "/searchPublishers", "/addBranch", "/editBranch", "/deleteBranch", "/pageBranches",
 		"/searchBranches", "/addBorrower", "/editBorrower", "/deleteBorrower", "/pageBorrowers", "/searchBorrowers",
-		"/editDueDate", "/returnBookLoan", "/updateBookCopies", "/validateUser", "/login_borrower" })
+		"/editDueDate", "/returnBookLoan", "/updateBookCopies", "/validateUser", "/login_borrower", "/checkoutBook" })
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -215,10 +215,29 @@ public class AdminServlet extends HttpServlet {
 			forwardPath = "/borrower.jsp";
 			request.setAttribute("cardNo", request.getParameter("cardNo"));
 			break;
+		case "/checkoutBook":
+			checkoutBook(request);
+			forwardPath = "/borrower.jsp";
+			request.setAttribute("cardNo", request.getParameter("cardNo"));
+			break;
 		}
 
 		RequestDispatcher rd = request.getRequestDispatcher(forwardPath);
 		rd.forward(request, response);
+	}
+
+	private void checkoutBook(HttpServletRequest request) {
+		AdminService service = new AdminService();
+		Integer cardNo = Integer.valueOf(request.getParameter("cardNo"));
+		Integer bookId = Integer.valueOf(request.getParameter("bookId"));
+		Integer branchId = Integer.valueOf(request.getParameter("branchId"));
+		try {
+			service.checkoutBook(cardNo, bookId, branchId);
+			request.setAttribute("message", "Book Checked Out");
+		} catch (SQLException e) {
+			request.setAttribute("message", "Book Check Out Failed");
+			//e.printStackTrace();
+		}
 	}
 
 	private void updateBookCopies(HttpServletRequest request) {
